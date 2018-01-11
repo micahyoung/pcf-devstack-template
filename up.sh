@@ -82,8 +82,8 @@ if ! grep -q opsman <(openstack server list -c Name -f value); then
   ;
 fi
 
-while ! grep -q "You are being" <(curl --max-time 10 -s -k https://$OPSMAN_IP); do
-  sleep 1
+while ! grep -q "You are being" <(curl --max-time 1 -s -k https://$OPSMAN_IP); do
+  sleep 10
 done
 
 if grep -q "Select an Authentication System" <(curl -s -k https://$OPSMAN_IP/setup); then
@@ -93,6 +93,6 @@ if grep -q "Select an Authentication System" <(curl -s -k https://$OPSMAN_IP/set
     configure-authentication \
     --username admin \
     --password password \
-    --decryption-password password \
+    --decryption-passphrase password \
   ;
 fi
