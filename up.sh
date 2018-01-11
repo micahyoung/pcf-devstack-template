@@ -104,7 +104,6 @@ fi
     --password password \
     configure-bosh \
       --iaas-configuration '{
-      --iaas-configuration '{
         "openstack_authentication_url": "http://10.10.0.4:5000/v2.0",
         "openstack_username": "admin",
         "openstack_password": "password",
