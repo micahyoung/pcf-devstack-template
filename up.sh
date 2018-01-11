@@ -12,6 +12,9 @@ source ./state/env.sh
 : ${PIVNET_API_TOKEN:?"!"}
 OPSMAN_VERSION=2.0.2
 SRT_VERSION=2.0.1
+DEVSTACK_ENV=~stack/devstack/openrc
+DEVSTACK_USER=admin
+DEVSTACK_PROJECT=demo
 
 set -x
 
@@ -34,3 +37,13 @@ if ! [ -f bin/pcf-openstack.raw ]; then
 
   mv bin/pcf-openstack-*.raw bin/pcf-openstack.raw
 fi
+
+source $DEVSTACK_ENV $DEVSTACK_USER $DEVSTACK_PROJECT
+openstack create image bin/pcf-openstack.raw opsman/$OPSMAN_VERSION
+openstack create \
+  --image=opsman/$OPSMAN_VERSION \
+  m1.xlarge \
+  --security-group=bosh \
+  --key-name=bosh \
+  opsman \
+  ;
