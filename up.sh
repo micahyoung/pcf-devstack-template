@@ -51,13 +51,19 @@ if ! grep opsman/$OPSMAN_VERSION <(openstack image list -c Name -f value); then
   ;
 fi
 
+if ! grep opsman <(openstack security group list -c Name -f value); then
+  openstack security group create opsman
+  openstack security group rule create opsman --protocol=tcp --dst-port=443
+fi
+
 if ! grep opsman <(openstack server list -c Name -f value); then
   openstack server create \
     --image=opsman/$OPSMAN_VERSION \
     --flavor=m1.xlarge \
-    --security-group=default \
+    --security-group=opsman \
     --key-name=bosh \
     --nic net-id=$NET_ID,v4-fixed-ip=$OPSMAN_IP \
     opsman \
   ;
 fi
+
