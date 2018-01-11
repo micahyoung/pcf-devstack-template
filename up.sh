@@ -16,6 +16,10 @@ DEVSTACK_ENV=~stack/devstack/openrc
 DEVSTACK_USER=admin
 DEVSTACK_PROJECT=demo
 
+set +o nounset
+source ~stack/devstack/openrc admin demo
+set -o nounset
+
 set -x
 
 mkdir -p bin
@@ -38,12 +42,19 @@ if ! [ -f bin/pcf-openstack.raw ]; then
   mv bin/pcf-openstack-*.raw bin/pcf-openstack.raw
 fi
 
-source $DEVSTACK_ENV $DEVSTACK_USER $DEVSTACK_PROJECT
-openstack create image bin/pcf-openstack.raw opsman/$OPSMAN_VERSION
-openstack create \
-  --image=opsman/$OPSMAN_VERSION \
-  m1.xlarge \
-  --security-group=bosh \
-  --key-name=bosh \
-  opsman \
+if ! grep opsman/$OPSMAN_VERSION <(openstack image list -c Name -f value); then
+  openstack image create \
+    --file=bin/pcf-openstack.raw \
+    opsman/$OPSMAN_VERSION \
   ;
+fi
+
+if ! grep opsman <(openstack server list -c Name -f value); then
+  openstack server create \
+    --image=opsman/$OPSMAN_VERSION \
+    --flavor=m1.xlarge \
+    --security-group=default \
+    --key-name=bosh \
+    opsman \
+  ;
+fi
