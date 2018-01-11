@@ -82,3 +82,7 @@ if ! grep -q opsman <(openstack server list -c Name -f value); then
   ;
 fi
 
+while ! grep -q "You are being" <(curl --max-time 10 https://$OPSMAN_IP); do
+  sleep 1
+done
+
