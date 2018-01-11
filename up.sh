@@ -44,7 +44,7 @@ if ! [ -f bin/pcf-openstack.raw ]; then
   mv bin/pcf-openstack-*.raw bin/pcf-openstack.raw
 fi
 
-if ! grep opsman <(openstack flavor list -c Name -f value); then
+if ! grep -q opsman <(openstack flavor list -c Name -f value); then
   openstack flavor create \
     opsman \
     --public \
@@ -54,19 +54,19 @@ if ! grep opsman <(openstack flavor list -c Name -f value); then
   ;
 fi
 
-if ! grep opsman/$OPSMAN_VERSION <(openstack image list -c Name -f value); then
+if ! grep -q opsman/$OPSMAN_VERSION <(openstack image list -c Name -f value); then
   openstack image create \
     --file=bin/pcf-openstack.raw \
     opsman/$OPSMAN_VERSION \
   ;
 fi
 
-if ! grep opsman <(openstack security group list -c Name -f value); then
+if ! grep -q opsman <(openstack security group list -c Name -f value); then
   openstack security group create opsman
   openstack security group rule create opsman --protocol=tcp --dst-port=443
 fi
 
-if ! grep opsman <(openstack server list -c Name -f value); then
+if ! grep -q opsman <(openstack server list -c Name -f value); then
   openstack server create \
     --image=opsman/$OPSMAN_VERSION \
     --flavor=opsman \
