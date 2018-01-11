@@ -44,6 +44,16 @@ if ! [ -f bin/pcf-openstack.raw ]; then
   mv bin/pcf-openstack-*.raw bin/pcf-openstack.raw
 fi
 
+if ! grep opsman <(openstack flavor list -c Name -f value); then
+  openstack flavor create \
+    opsman \
+    --public \
+    --vcpus 1 \
+    --ram 2048 \
+    --disk 50 \
+  ;
+fi
+
 if ! grep opsman/$OPSMAN_VERSION <(openstack image list -c Name -f value); then
   openstack image create \
     --file=bin/pcf-openstack.raw \
@@ -59,7 +69,7 @@ fi
 if ! grep opsman <(openstack server list -c Name -f value); then
   openstack server create \
     --image=opsman/$OPSMAN_VERSION \
-    --flavor=m1.xlarge \
+    --flavor=opsman \
     --security-group=opsman \
     --key-name=bosh \
     --nic net-id=$NET_ID,v4-fixed-ip=$OPSMAN_IP \
