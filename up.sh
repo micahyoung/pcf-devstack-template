@@ -32,6 +32,11 @@ if ! [ -f bin/pivnet ]; then
   chmod +x bin/pivnet
 fi
 
+if ! [ -f bin/om ]; then
+  curl -L "https://github.com/pivotal-cf/om/releases/download/0.29.0/om-linux" > bin/om
+  chmod +x bin/om
+fi
+
 if ! [ -f bin/pcf-openstack.raw ]; then
   bin/pivnet download-product-files \
     --product-slug=ops-manager \
