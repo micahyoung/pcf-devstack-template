@@ -55,6 +55,7 @@ if ! grep opsman <(openstack server list -c Name -f value); then
     --flavor=m1.xlarge \
     --security-group=default \
     --key-name=bosh \
+    --nic v4-fixed-ip=10.0.0.3 \
     opsman \
   ;
 fi
