@@ -10,6 +10,8 @@ fi
 
 source ./state/env.sh
 : ${PIVNET_API_TOKEN:?"!"}
+OPSMAN_VERSION=2.0.2
+SRT_VERSION=2.0.1
 
 set -x
 
@@ -24,10 +26,11 @@ fi
 if ! [ -f bin/pcf-openstack.raw ]; then
   bin/pivnet download-product-files \
     --product-slug=ops-manager \
-    --release-version=2.0.2 \
+    --release-version=$OPSMAN_VERSION \
     --glob='*pcf-openstack-*.raw' \
     --download-dir=bin/ \
     --accept-eula \
   ;
+
   mv bin/pcf-openstack-*.raw bin/pcf-openstack.raw
 fi
