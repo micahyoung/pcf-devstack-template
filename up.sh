@@ -86,3 +86,13 @@ while ! grep -q "You are being" <(curl --max-time 10 -s -k https://$OPSMAN_IP); 
   sleep 1
 done
 
+if grep -q "Select an Authentication System" <(curl -s -k https://$OPSMAN_IP/setup); then
+  bin/om \
+    --target https://$OPSMAN_IP \
+    --skip-ssl-validation \
+    configure-authentication \
+    --username admin \
+    --password password \
+    --decryption-password password \
+  ;
+fi
