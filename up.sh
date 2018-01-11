@@ -10,11 +10,13 @@ fi
 
 source ./state/env.sh
 : ${PIVNET_API_TOKEN:?"!"}
+: ${NET_ID:?"!"}
 OPSMAN_VERSION=2.0.2
 SRT_VERSION=2.0.1
 DEVSTACK_ENV=~stack/devstack/openrc
 DEVSTACK_USER=admin
 DEVSTACK_PROJECT=demo
+OPSMAN_IP=10.0.0.3
 
 set +o nounset
 source ~stack/devstack/openrc admin demo
@@ -55,7 +57,7 @@ if ! grep opsman <(openstack server list -c Name -f value); then
     --flavor=m1.xlarge \
     --security-group=default \
     --key-name=bosh \
-    --nic v4-fixed-ip=10.0.0.3 \
+    --nic net-id=$NET_ID,v4-fixed-ip=$OPSMAN_IP \
     opsman \
   ;
 fi
