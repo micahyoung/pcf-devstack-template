@@ -17,15 +17,16 @@ source ./state/env.sh
 OPSMAN_VERSION=1.11.18
 PAS_VERSION=1.11.22
 PAS_GLOB="*cf-*.pivotal"
-DEVSTACK_ENV=~stack/devstack/openrc
-DEVSTACK_USER=admin
-DEVSTACK_PROJECT=demo
+OPENSTACK_USERNAME=admin
+OPENSTACK_PASSWORD=password
+OPENSTACK_PROJECT=demo
 OPSMAN_IP=10.0.0.3
 OPSMAN_USERNAME=admin
 OPSMAN_PASSWORD=password
+OPSMAN_DECRYPTION_PASSWORD=password
 
 set +o nounset
-source ~stack/devstack/openrc admin demo
+source ~stack/devstack/openrc $OPENSTACK_USERNAME $OPENSTACK_PROJECT
 set -o nounset
 
 set -x
@@ -97,9 +98,9 @@ if grep -q "Select an Authentication System" <(curl -s -k https://$OPSMAN_IP/set
     --target https://$OPSMAN_IP \
     --skip-ssl-validation \
     configure-authentication \
-      --username admin \
-      --password password \
-      --decryption-passphrase password \
+      --username $OPSMAN_USERNAME \
+      --password $OPSMAN_PASSWORD \
+      --decryption-passphrase $OPSMAN_DECRYPTION_PASSWORD \
   ;
 fi
 
@@ -112,9 +113,9 @@ if ! grep -q "p-bosh" <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USERNAME -p $
     configure-bosh \
       --iaas-configuration '{
         "openstack_authentication_url": "http://'$OPENSTACK_HOST'/v2.0",
-        "openstack_username": "admin",
-        "openstack_password": "password",
-        "openstack_tenant": "demo",
+        "openstack_username": "'$OPENSTACK_USERNAME'",
+        "openstack_password": "'$OPENSTACK_PASSWORD'",
+        "openstack_tenant": "'$OPENSTACK_PROJECT'",
         "openstack_region": "RegionOne",
         "openstack_security_group": "bosh",
         "keystone_version": "v2.0",
