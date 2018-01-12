@@ -131,7 +131,7 @@ fi
           }
         ]
       }' \
-      --network-configuration '{
+      --networks-configuration '{
         "icmp_checks_enabled": true,
         "networks": [
           {
