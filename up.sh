@@ -210,4 +210,5 @@ if ! grep -q $PAS_PRODUCT_NAME <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USER
     stage-product \
       --product-name $PAS_PRODUCT_NAME \
       --product-version $PAS_VERSION \
+  ;
 fi
