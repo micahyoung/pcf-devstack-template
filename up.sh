@@ -138,7 +138,7 @@ fi
             "service_network": false,
             "subnets": [
               {
-                "iaas_identifier": "vsphere-network-name",
+                "iaas_identifier": "'$NET_ID'",
                 "cidr": "10.0.0.0/24",
                 "reserved_ip_ranges": "10.0.0.0-10.0.0.4",
                 "dns": "10.0.0.2",
