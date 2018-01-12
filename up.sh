@@ -171,3 +171,16 @@ if ! grep -q "p-bosh" <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USERNAME -p $
     apply-changes \
   ;
 fi
+
+if ! [ -f bin/srt.pivotal ]; then
+  bin/pivnet download-product-files \
+    --product-slug=elastic-runtime \
+    --release-version=$SRT_VERSION \
+    --glob='*srt-*.pivotal' \
+    --download-dir=bin/ \
+    --accept-eula \
+  ;
+
+  mv bin/srt-*.pivotal bin/srt.pivotal
+fi
+
