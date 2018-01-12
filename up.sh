@@ -16,6 +16,7 @@ source ./state/env.sh
 : ${API_SSL_CERT:?"!"}
 OPSMAN_VERSION=1.11.18
 OPSMAN_GLOB="pcf-openstack-*.raw"
+PAS_PRODUCT_NAME="cf"
 PAS_VERSION=1.11.22
 PAS_GLOB="cf-*.pivotal"
 OPENSTACK_USERNAME=admin
@@ -189,7 +190,7 @@ if ! [ -f bin/pas.pivotal ]; then
   mv bin/$PAS_GLOB bin/pas.pivotal
 fi
 
-if ! grep -q "cf" <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USERNAME -p $OPSMAN_PASSWORD available-products); then
+if ! grep -q $PAS_PRODUCT_NAME <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USERNAME -p $OPSMAN_PASSWORD available-products); then
   bin/om \
     --target https://$OPSMAN_IP \
     --username $OPSMAN_USERNAME \
@@ -198,4 +199,15 @@ if ! grep -q "cf" <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USERNAME -p $OPSM
     upload-product \
       --product bin/pas.pivotal \
   ;
+fi
+
+if ! grep -q $PAS_PRODUCT_NAME <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USERNAME -p $OPSMAN_PASSWORD deployed-products); then
+  bin/om \
+    --target https://$OPSMAN_IP \
+    --username $OPSMAN_USERNAME \
+    --password $OPSMAN_PASSWORD \
+    --skip-ssl-validation \
+    stage-product \
+      --product-name $PAS_PRODUCT_NAME \
+      --product-version $PAS_VERSION \
 fi
