@@ -121,7 +121,6 @@ fi
         "ntp_servers_string": "pool.ntp.org"
       }' \
       --security-configuration '{
-        "trusted_certificates": "some-trusted-certificates",
         "vm_password_type": "generate"
       }' \
       --az-configuration '{
