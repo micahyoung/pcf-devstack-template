@@ -46,7 +46,8 @@ if ! [ -f bin/om ]; then
 fi
 
 if ! [ -f bin/pcf-openstack.raw ]; then
-  bin/pivnet download-product-files \
+  bin/pivnet \
+    download-product-files \
     --product-slug=ops-manager \
     --release-version=$OPSMAN_VERSION \
     --glob=$OPSMAN_GLOB \
@@ -176,7 +177,8 @@ if ! grep -q "p-bosh" <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USERNAME -p $
 fi
 
 if ! [ -f bin/pas.pivotal ]; then
-  bin/pivnet download-product-files \
+  bin/pivnet \
+    download-product-files \
     --product-slug=elastic-runtime \
     --release-version=$PAS_VERSION \
     --glob=$PAS_GLOB \
@@ -187,3 +189,13 @@ if ! [ -f bin/pas.pivotal ]; then
   mv bin/$PAS_GLOB bin/pas.pivotal
 fi
 
+if ! grep -q "cf" <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USERNAME -p $OPSMAN_PASSWORD available-products); then
+  bin/om \
+    --target https://$OPSMAN_IP \
+    --username $OPSMAN_USERNAME \
+    --password $OPSMAN_PASSWORD \
+    --skip-ssl-validation \
+    upload-product \
+      --product bin/pas.pivotal \
+  ;
+fi
