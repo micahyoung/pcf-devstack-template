@@ -120,79 +120,43 @@ fi
       --director-configuration '{
         "ntp_servers_string": "pool.ntp.org"
       }' \
-;
-#      --security-configuration '{
-#        "trusted_certificates": "some-trusted-certificates",
-#        "vm_password_type": "generate"
-#      }' \
-#      --az-configuration '{
-#        "availability_zones": [
-#          {
-#            "name": "nova",
-#          }
-#        ]
-#      }' \
-#      --network-configuration '{
-#        "icmp_checks_enabled": false,
-#        "networks": [
-#          {
-#            "name": "opsman-network",
-#            "service_network": false,
-#            "subnets": [
-#              {
-#                "iaas_identifier": "vsphere-network-name",
-#                "cidr": "10.0.0.0/24",
-#                "reserved_ip_ranges": "10.0.0.0-10.0.0.4",
-#                "dns": "8.8.8.8",
-#                "gateway": "10.0.0.1",
-#                "availability_zones": [
-#                  "az-1"
-#                ]
-#              }
-#            ]
-#          }
-#          {
-#            "name": "ert-network",
-#            "service_network": false,
-#            "subnets": [
-#              {
-#                "iaas_identifier": "vsphere-network-name",
-#                "cidr": "10.0.4.0/24",
-#                "reserved_ip_ranges": "10.0.4.0-10.0.4.4",
-#                "dns": "8.8.8.8",
-#                "gateway": "10.0.4.1",
-#                "availability_zones": [
-#                  "az-1",
-#                  "az-2",
-#                  "az-3"
-#                ]
-#              }
-#            ]
-#          }
-#          {
-#            "name": "services-network",
-#            "service_network": false,
-#            "subnets": [
-#              {
-#                "iaas_identifier": "vsphere-network-name",
-#                "cidr": "10.0.8.0/24",
-#                "reserved_ip_ranges": "10.0.8.0-10.0.8.4",
-#                "dns": "8.8.8.8",
-#                "gateway": "10.0.8.1",
-#                "availability_zones": [
-#                  "az-1",
-#                  "az-2",
-#                  "az-3"
-#                ]
-#              }
-#            ]
-#          }
-#        ]
-#      }' \
-#      --network-assignment '{
-#        "singleton_availability_zone": "az-1",
-#        "network": "opsman-network"
-#      }'
+      --security-configuration '{
+        "trusted_certificates": "some-trusted-certificates",
+        "vm_password_type": "generate"
+      }' \
+      --az-configuration '{
+        "availability_zones": [
+          {
+            "name": "nova",
+          }
+        ]
+      }' \
+      --network-configuration '{
+        "icmp_checks_enabled": true,
+        "networks": [
+          {
+            "name": "private-network",
+            "service_network": false,
+            "subnets": [
+              {
+                "iaas_identifier": "vsphere-network-name",
+                "cidr": "10.0.0.0/24",
+                "reserved_ip_ranges": "10.0.0.0-10.0.0.4",
+                "dns": "10.0.0.2",
+                "gateway": "10.0.0.1",
+                "availability_zones": [
+                  "nova"
+                ]
+              }
+            ]
+          }
+        ]
+      }' \
+      --network-assignment '{
+        "singleton_availability_zone": "nova",
+        "network": "private-network"
+      }' \
+  ;
 
 #if grep -q "Select an Authentication System" <(curl -s -k https://$OPSMAN_IP/setup); then
 #  bin/om \
