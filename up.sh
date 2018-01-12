@@ -20,6 +20,8 @@ DEVSTACK_ENV=~stack/devstack/openrc
 DEVSTACK_USER=admin
 DEVSTACK_PROJECT=demo
 OPSMAN_IP=10.0.0.3
+OPSMAN_USERNAME=admin
+OPSMAN_PASSWORD=password
 
 set +o nounset
 source ~stack/devstack/openrc admin demo
@@ -100,11 +102,12 @@ if grep -q "Select an Authentication System" <(curl -s -k https://$OPSMAN_IP/set
   ;
 fi
 
+if ! grep -q "p-bosh" <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USERNAME -p $OPSMAN_PASSWORD installations); then
   bin/om \
     --target https://$OPSMAN_IP \
     --skip-ssl-validation \
-    --username admin \
-    --password password \
+    --username $OPSMAN_USERNAME \
+    --password $OPSMAN_PASSWORD \
     configure-bosh \
       --iaas-configuration '{
         "openstack_authentication_url": "http://'$OPENSTACK_HOST'/v2.0",
@@ -160,13 +163,11 @@ fi
       }' \
   ;
 
-#if grep -q "Select an Authentication System" <(curl -s -k https://$OPSMAN_IP/setup); then
-#  bin/om \
-#    --target https://$OPSMAN_IP \
-#    --skip-ssl-validation \
-#    --username admin \
-#    --password password \
-#    configure-authentication \
-#    --decryption-passphrase password \
-#  ;
-#fi
+  bin/om \
+    --target https://$OPSMAN_IP \
+    --username $OPSMAN_USERNAME \
+    --password $OPSMAN_PASSWORD \
+    --skip-ssl-validation \
+    apply-changes \
+  ;
+fi
