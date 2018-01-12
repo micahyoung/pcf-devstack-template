@@ -117,8 +117,8 @@ fi
         "ignore_server_availability_zone": false,
         "openstack_key_pair_name": "bosh",
         "networking_model": "neutron",
-        "ssh_private_key": "'$SSH_PRIVATE_KEY'",
-        "api_ssl_cert": "'$API_SSL_CERT'"
+        "ssh_private_key": "'"$SSH_PRIVATE_KEY"'",
+        "api_ssl_cert": "'"$API_SSL_CERT"'"
       }' \
       --director-configuration '{
         "ntp_servers_string": "pool.ntp.org"
