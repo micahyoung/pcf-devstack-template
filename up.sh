@@ -15,8 +15,9 @@ source ./state/env.sh
 : ${SSH_PRIVATE_KEY:?"!"}
 : ${API_SSL_CERT:?"!"}
 OPSMAN_VERSION=1.11.18
+OPSMAN_GLOB="pcf-openstack-*.raw"
 PAS_VERSION=1.11.22
-PAS_GLOB="*cf-*.pivotal"
+PAS_GLOB="cf-*.pivotal"
 OPENSTACK_USERNAME=admin
 OPENSTACK_PASSWORD=password
 OPENSTACK_PROJECT=demo
@@ -48,12 +49,12 @@ if ! [ -f bin/pcf-openstack.raw ]; then
   bin/pivnet download-product-files \
     --product-slug=ops-manager \
     --release-version=$OPSMAN_VERSION \
-    --glob='*pcf-openstack-*.raw' \
+    --glob=$OPSMAN_GLOB \
     --download-dir=bin/ \
     --accept-eula \
   ;
 
-  mv bin/pcf-openstack-*.raw bin/pcf-openstack.raw
+  mv bin/$OPSMAN_GLOB bin/pcf-openstack.raw
 fi
 
 if ! grep -q opsman <(openstack flavor list -c Name -f value); then
@@ -174,15 +175,15 @@ if ! grep -q "p-bosh" <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USERNAME -p $
   ;
 fi
 
-if ! [ -f bin/srt.pivotal ]; then
-  bin/pivnet download-product-files \
-    --product-slug=elastic-runtime \
-    --release-version=$PAS_VERSION \
-    --glob=$PAS_GLOB \
-    --download-dir=bin/ \
-    --accept-eula \
-  ;
+if ! [ -f bin/pas.pivotal ]; then
+#  bin/pivnet download-product-files \
+#    --product-slug=elastic-runtime \
+#    --release-version=$PAS_VERSION \
+#    --glob=$PAS_GLOB \
+#    --download-dir=bin/ \
+#    --accept-eula \
+#  ;
 
-  mv bin/srt-*.pivotal bin/srt.pivotal
+  mv bin/$PAS_GLOB bin/pas.pivotal
 fi
 
