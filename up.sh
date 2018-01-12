@@ -15,7 +15,8 @@ source ./state/env.sh
 : ${SSH_PRIVATE_KEY:?"!"}
 : ${API_SSL_CERT:?"!"}
 OPSMAN_VERSION=1.11.18
-SRT_VERSION=1.11.22
+PAS_VERSION=1.11.22
+PAS_GLOB="*cf-*.pivotal"
 DEVSTACK_ENV=~stack/devstack/openrc
 DEVSTACK_USER=admin
 DEVSTACK_PROJECT=demo
@@ -175,8 +176,8 @@ fi
 if ! [ -f bin/srt.pivotal ]; then
   bin/pivnet download-product-files \
     --product-slug=elastic-runtime \
-    --release-version=$SRT_VERSION \
-    --glob='*srt-*.pivotal' \
+    --release-version=$PAS_VERSION \
+    --glob=$PAS_GLOB \
     --download-dir=bin/ \
     --accept-eula \
   ;
