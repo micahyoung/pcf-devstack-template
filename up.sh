@@ -126,7 +126,7 @@ fi
       --az-configuration '{
         "availability_zones": [
           {
-            "name": "nova",
+            "name": "nova"
           }
         ]
       }' \
