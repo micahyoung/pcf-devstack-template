@@ -176,13 +176,13 @@ if ! grep -q "p-bosh" <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USERNAME -p $
 fi
 
 if ! [ -f bin/pas.pivotal ]; then
-#  bin/pivnet download-product-files \
-#    --product-slug=elastic-runtime \
-#    --release-version=$PAS_VERSION \
-#    --glob=$PAS_GLOB \
-#    --download-dir=bin/ \
-#    --accept-eula \
-#  ;
+  bin/pivnet download-product-files \
+    --product-slug=elastic-runtime \
+    --release-version=$PAS_VERSION \
+    --glob=$PAS_GLOB \
+    --download-dir=bin/ \
+    --accept-eula \
+  ;
 
   mv bin/$PAS_GLOB bin/pas.pivotal
 fi
