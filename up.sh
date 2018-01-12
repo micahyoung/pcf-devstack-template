@@ -102,7 +102,7 @@ if grep -q "Select an Authentication System" <(curl -s -k https://$OPSMAN_IP/set
   ;
 fi
 
-if ! grep -q "p-bosh" <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USERNAME -p $OPSMAN_PASSWORD installations); then
+if ! grep -q "p-bosh" <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USERNAME -p $OPSMAN_PASSWORD deployed-products); then
   bin/om \
     --target https://$OPSMAN_IP \
     --skip-ssl-validation \
