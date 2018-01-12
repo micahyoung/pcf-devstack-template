@@ -211,4 +211,12 @@ if ! grep -q $PAS_PRODUCT_NAME <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USER
       --product-name $PAS_PRODUCT_NAME \
       --product-version $PAS_VERSION \
   ;
+
+  bin/om \
+    --target https://$OPSMAN_IP \
+    --username $OPSMAN_USERNAME \
+    --password $OPSMAN_PASSWORD \
+    --skip-ssl-validation \
+    apply-changes \
+  ;
 fi
