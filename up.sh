@@ -277,9 +277,59 @@ if ! grep -q $PAS_PRODUCT_NAME <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USER
          "name": "private-network"
        }
      }' \
-;
-#     --product-resources '{
-#       }' \
+     --product-resources '{
+       "consul_server": {
+         "instances": 1
+       },
+       "nats": {
+         "instances": 1
+       },
+       "etcd_tls_server": {
+         "instances": 1
+       },
+       "nfs_server": {
+         "persistent_disk": { "size_mb": "10240" }
+       },
+       "mysql_proxy": {
+         "instances": 1
+       },
+       "mysql": {
+         "instances": 1,
+         "persistent_disk": { "size_mb": "10240" }
+       },
+       "diego_database": {
+         "instances": 1
+       },
+       "uaa": {
+         "instances": 1
+       },
+       "cloud_controller": {
+         "instances": 1
+       },
+       "router": {
+         "instances": 1
+       },
+       "cloud_controller_worker": {
+         "instances": 1
+       },
+       "diego_brain": {
+         "instances": 1,
+         "persistent_disk": { "size_mb": "10240" }
+       },
+       "diego_cell": {
+         "instances": 1
+       },
+       "loggregator_trafficcontroller": {
+         "instances": 1
+       },
+       "syslog_adapter": {
+         "instances": 1
+       },
+       "doppler": {
+         "instances": 1
+       }
+    }' \
+  ;
 
   bin/om \
     --target https://$OPSMAN_IP \
