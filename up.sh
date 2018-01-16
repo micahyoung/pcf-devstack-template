@@ -14,6 +14,7 @@ source ./state/env.sh
 : ${OPENSTACK_HOST:?"!"}
 : ${SSH_PRIVATE_KEY:?"!"}
 : ${API_SSL_CERT:?"!"}
+OPSMAN_PRODUCT_NAME=ops-manager
 OPSMAN_VERSION=1.11.18
 OPSMAN_GLOB="pcf-openstack-*.raw"
 PAS_PRODUCT_NAME="cf"
@@ -43,6 +44,10 @@ if ! [ -f bin/pivnet ]; then
   chmod +x bin/pivnet
 fi
 
+if grep "Please login" <(bin/pivnet products); then
+  bin/pivnet login --api-token=$PIVNET_API_TOKEN
+fi
+
 if ! [ -f bin/om ]; then
   curl -L "https://github.com/pivotal-cf/om/releases/download/0.29.0/om-linux" > bin/om
   chmod +x bin/om
@@ -51,7 +56,7 @@ fi
 if ! [ -f bin/pcf-openstack.raw ]; then
   bin/pivnet \
     download-product-files \
-    --product-slug=ops-manager \
+    --product-slug=$OPSMAN_PRODUCT_NAME \
     --release-version=$OPSMAN_VERSION \
     --glob=$OPSMAN_GLOB \
     --download-dir=bin/ \
