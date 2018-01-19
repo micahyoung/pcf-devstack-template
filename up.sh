@@ -53,6 +53,20 @@ if ! [ -f bin/om ]; then
   chmod +x bin/om
 fi
 
+if ! [ -d bin/pcf-pipelines ]; then
+  bin/pivnet \
+    download-product-files \
+    --product-slug=pcf-automation \
+    --release-version=v0.22.0 \
+    --glob=pcf-pipelines-*.tgz \
+    --download-dir=bin/ \
+    --accept-eula \
+  ;
+
+  tar xvzf bin/pcf-pipelines-*.tgz
+  rm bin/pcf-pipelines-*.tgz
+fi
+
 if ! [ -f bin/pcf-openstack.raw ]; then
   bin/pivnet \
     download-product-files \
