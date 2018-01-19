@@ -14,6 +14,7 @@ source ./state/env.sh
 : ${OPENSTACK_HOST:?"!"}
 : ${SSH_PRIVATE_KEY:?"!"}
 : ${API_SSL_CERT:?"!"}
+: ${CONCOURSE_URL:?"!"}
 OPSMAN_PRODUCT_NAME=ops-manager
 OPSMAN_VERSION=1.11.18
 OPSMAN_GLOB="pcf-openstack-*.raw"
@@ -53,6 +54,11 @@ if ! [ -f bin/om ]; then
   chmod +x bin/om
 fi
 
+if ! [ -f bin/fly ]; then
+  curl -L "$CONCOURSE_URL/api/v1/cli?arch=amd64&platform=linux" > bin/fly
+  chmod +x bin/fly
+fi
+
 if ! [ -d bin/pcf-pipelines ]; then
   bin/pivnet \
     download-product-files \
@@ -63,9 +69,10 @@ if ! [ -d bin/pcf-pipelines ]; then
     --accept-eula \
   ;
 
-  tar xvzf bin/pcf-pipelines-*.tgz
+  tar -xf bin/pcf-pipelines-*.tgz -C bin/
   rm bin/pcf-pipelines-*.tgz
 fi
+exit
 
 if ! [ -f bin/pcf-openstack.raw ]; then
   bin/pivnet \
