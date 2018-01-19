@@ -60,6 +60,8 @@ if ! [ -f bin/fly ]; then
 fi
 
 fly --target c login --concourse-url $CONCOURSE_URL
+fly --target c set-pipeline bin/pcf-pipelines/install-pcf/openstack/pipeline.yml \
+  ;
 exit
 
 if ! [ -d bin/pcf-pipelines ]; then
