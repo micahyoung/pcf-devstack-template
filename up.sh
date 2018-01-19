@@ -86,6 +86,7 @@ fi
 if ! grep -q opsman <(openstack security group list -c Name -f value); then
   openstack security group create opsman
   openstack security group rule create opsman --protocol=tcp --dst-port=443
+  openstack security group rule create opsman --protocol=tcp --dst-port=22
 fi
 
 if ! grep -q opsman <(openstack server list -c Name -f value); then
@@ -228,16 +229,16 @@ bin/om \
     --stemcell bin/$PAS_STEMCELL_GLOB \
 ;
 
-if ! grep -q $PAS_PRODUCT_NAME <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USERNAME -p $OPSMAN_PASSWORD deployed-products); then
-  bin/om \
-    --target https://$OPSMAN_IP \
-    --username $OPSMAN_USERNAME \
-    --password $OPSMAN_PASSWORD \
-    --skip-ssl-validation \
-    stage-product \
-      --product-name $PAS_PRODUCT_NAME \
-      --product-version $PAS_VERSION \
-  ;
+#if ! grep -q $PAS_PRODUCT_NAME <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USERNAME -p $OPSMAN_PASSWORD deployed-products); then
+#  bin/om \
+#    --target https://$OPSMAN_IP \
+#    --username $OPSMAN_USERNAME \
+#    --password $OPSMAN_PASSWORD \
+#    --skip-ssl-validation \
+#    stage-product \
+#      --product-name $PAS_PRODUCT_NAME \
+#      --product-version $PAS_VERSION \
+#  ;
 
   bin/om \
     --target https://$OPSMAN_IP \
@@ -248,13 +249,25 @@ if ! grep -q $PAS_PRODUCT_NAME <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USER
       --product-name $PAS_PRODUCT_NAME \
       --product-properties '{
        ".cloud_controller.system_domain": {
-         "value": "cf.young.io"
+         "value": "pcf.young.io"
        },
        ".cloud_controller.apps_domain": {
-         "value": "cf.young.io"
+         "value": "pcf.young.io"
+       },
+       ".ha_proxy.skip_cert_verify": {
+         "value": "1"
        },
        ".properties.networking_point_of_entry": {
-         "value": "external_non_ssl"
+         "value": "haproxy"
+       },
+       ".properties.networking_point_of_entry.haproxy.ssl_ciphers": {
+         "value": "DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384"
+       },
+       ".properties.networking_point_of_entry.haproxy.ssl_rsa_certificate": {
+         "value": {
+           "cert_pem": "-----BEGIN CERTIFICATE-----\nMIIDdDCCAlygAwIBAgIVAIXx6vMQHDSKGTYDxMBMOKNR5hfsMA0GCSqGSIb3DQEB\nCwUAMB8xCzAJBgNVBAYTAlVTMRAwDgYDVQQKDAdQaXZvdGFsMB4XDTE4MDExNjEz\nNTExN1oXDTIwMDExNjEzNTExN1owODELMAkGA1UEBhMCVVMxEDAOBgNVBAoMB1Bp\ndm90YWwxFzAVBgNVBAMMDioucGNmLnlvdW5nLmlvMIIBIjANBgkqhkiG9w0BAQEF\nAAOCAQ8AMIIBCgKCAQEAy2XWSjI8I+8NkPybm/s20sJ3feb+bl3/siyvBT/fwOQm\nGFWBLR7eK1rK45bayG9HOyd6dw9a4Y0FCnZjyGpJ0vGNUmF84FCMJaFbr9Kbz2UX\ndgdi6uOiMJJFE3JZHx7uPLlGKVH3ZwYeymSqT19SeduPJrWOXWe8ldWiiaNoPGvz\nVHTsRp9rGTJPdmXl9UWIcZjj8RcPnR6RoarwFt0fm8h+MOrmJi8Ljv2x53oh39Fg\n3szhjWctYiv50CL614PbUiTkx/H9lcdTIIFdbAOBzOwtsKeF4VTDd7pCeKozaQ4G\ndiUzMCSpyUJ+knCjcYV97mgAD3pjmrBZk1RNeCMYXwIDAQABo4GNMIGKMA4GA1Ud\nDwEB/wQEAwIHgDAdBgNVHQ4EFgQULb08ze+CGiVNOs37dAEd2m3oVAkwHQYDVR0l\nBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMBMB8GA1UdIwQYMBaAFEKpP+q/yBOjmUbm\nYAbm57SBLveAMBkGA1UdEQQSMBCCDioucGNmLnlvdW5nLmlvMA0GCSqGSIb3DQEB\nCwUAA4IBAQCRWH7TFEPvYN92WXnHb3jFRxdaXRlTJpn+/qn0l/9HS3a5PKviRPN6\nxcCRy/AJpJhrUR9hUgAWjpR7prIN/XF9RqkiQq0bSv35K4WX2cnjvABN4TlbRQ1E\nYJucR+kbum9qvbdvYa7PISPYhO8wqSbo/X3CdH5u7bm3r02gzc8PpCiH6wYsT8oK\n7GUmITWCl5aok0wtng4DtlEchCtfOOsivpJTAvCkX9k7QlrGf2fBWcdBGeRY0IDN\nGM8caJLaGGRt8kaTP9iTXoDSWk64vmAXM+RvKKQPdknQ8IQWs7GrMmStQRs1LK7W\nDpRDoa/9rzMKILzdbehgrvutk0Xh6AD5\n-----END CERTIFICATE-----",
+           "private_key_pem": "-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEAy2XWSjI8I+8NkPybm/s20sJ3feb+bl3/siyvBT/fwOQmGFWB\nLR7eK1rK45bayG9HOyd6dw9a4Y0FCnZjyGpJ0vGNUmF84FCMJaFbr9Kbz2UXdgdi\n6uOiMJJFE3JZHx7uPLlGKVH3ZwYeymSqT19SeduPJrWOXWe8ldWiiaNoPGvzVHTs\nRp9rGTJPdmXl9UWIcZjj8RcPnR6RoarwFt0fm8h+MOrmJi8Ljv2x53oh39Fg3szh\njWctYiv50CL614PbUiTkx/H9lcdTIIFdbAOBzOwtsKeF4VTDd7pCeKozaQ4GdiUz\nMCSpyUJ+knCjcYV97mgAD3pjmrBZk1RNeCMYXwIDAQABAoIBAF5Z6jLW5MEChneI\nRqLvwLm5zfZQbhxCbHd5dOLpg2EWNHm7SEXm+MaBwnYap3is7g0Jvix2qgDRCtKU\noqr4azB4LsdVQ7lGhAx8smx4NSDa0yxENuWhHL6NS4++zoq6LWdrxpkqVaqr0yKt\n2bciD79JUzlwpQ69LWUQCerxK0xDL4Vx/S2eHF+CjXLsloSbbNWJWHMQKiThxBT5\n1Gg1mDU4O9LqmbwRC5pJwxsNrZbcTax+5AlsTHCnvKx37bN9ltgdzc5+SJgITttD\nzIDFVCiORQ8sIoCyM5FfiYDHlSEF+yjlWy2Ckrwsky40qAqGJkDYZrIf7SUxYAZP\nNhXqNUECgYEA6Xxp54zDkBhfeurEcN68ot7yuhGP6XMnUg8pbTF+FYU6+YatzbBJ\ndqeaXu9IdWEqn69Nz8nbb4wsUf0mfyjPuUnLHhXPYjldwidwVERZ5nchKwCd4q8O\nRVhUr/rSWFebD21c/N44IjrADIXddXOWy7Kj+jowk/wo81nZL4KRUWECgYEA3wKy\nyesrHs1UxYb09D126AG8A/45kzzjV4gU7BReGedkitg2Z2qhtF6W4720hNHma2vv\nmaOLSbjlHEpJZ85N6zLyKL6ubuE5xVqOiFRAf87/gByDL4nYcp+aKTiFy8mrYfQ0\nrfjRQKfnbKljUoLlFOIFHobgkwW4m8ZgF2gmAb8CgYEAs9bnf7lVnHSZfoS7wDBf\n3ZeaICWM0oSm4bbZ8sgvVIYlUbMhxg+l1iXsankmN3sbKJoPdiAFzBqMvK4fa8xU\ni2RCdi7YaNDE3dog1Fc9Y52Yx5WXBtZNSK5rtIyeXftEbRKQkBjd5ceYy0yEsoXQ\nvZ8gXIlbh3CvXhlzhvur0KECgYEAhobsL14LnwMiNh3ZOlSxm/cf4hDDzowWYEEY\nzejjcyDgx9jxyKTMcy/0OeHAObcdFoP//2Bmr8w3eT9e1J3g5xbOecG9G+oFnYWp\nIZghaHgILNIGWPEAfvTEXEVagLphBi/4b1H/eM9QjX4JCkcnxdcqW2Xlpwr2eBHM\n+ZG8C6UCgYBHj3QW0d/SlHRlBP+pbF22rj7M3oNEjkLFXtYun1k7yG4qX0q2YZpB\nZAOoLmOQ/UxPiOeNAhXb3UsbKwtdPvy77F5OTPUMTf+AwET1kB6vsdXf9ZxXFoxN\nWFQXMTAJz3dpgKcoFMsOZEOVWAkXi5kpOoLQnBAV3X3T766KNEf64w==\n-----END RSA PRIVATE KEY-----"
+         }
        },
        ".uaa.service_provider_key_credentials": {
          "value": {
@@ -267,6 +280,12 @@ if ! grep -q $PAS_PRODUCT_NAME <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USER
        },
        ".mysql_monitor.recipient_email": {
          "value": "micah+cf@young.io"
+       },
+       ".properties.system_database": {
+         "value": "internal"
+       },
+       ".properties.uaa_database": {
+         "value": "internal"
        }
      }' \
      --product-network '{
@@ -322,7 +341,8 @@ if ! grep -q $PAS_PRODUCT_NAME <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USER
          "persistent_disk": { "size_mb": "10240" }
        },
        "diego_cell": {
-         "instances": 1
+         "instances": 1,
+         "instance_type": { "id": "m1.xlarge" }
        },
        "loggregator_trafficcontroller": {
          "instances": 1
@@ -343,4 +363,4 @@ if ! grep -q $PAS_PRODUCT_NAME <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USER
     --skip-ssl-validation \
     apply-changes \
   ;
-fi
+#fi
