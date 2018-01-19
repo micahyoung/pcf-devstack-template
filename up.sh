@@ -59,6 +59,9 @@ if ! [ -f bin/fly ]; then
   chmod +x bin/fly
 fi
 
+fly --target c login --concourse-url $CONCOURSE_URL
+exit
+
 if ! [ -d bin/pcf-pipelines ]; then
   bin/pivnet \
     download-product-files \
