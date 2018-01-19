@@ -254,9 +254,6 @@ bin/om \
        ".cloud_controller.apps_domain": {
          "value": "pcf.young.io"
        },
-       ".ha_proxy.skip_cert_verify": {
-         "value": "1"
-       },
        ".properties.networking_point_of_entry": {
          "value": "haproxy"
        },
@@ -281,11 +278,8 @@ bin/om \
        ".mysql_monitor.recipient_email": {
          "value": "micah+cf@young.io"
        },
-       ".properties.system_database": {
-         "value": "internal"
-       },
-       ".properties.uaa_database": {
-         "value": "internal"
+       ".ha_proxy.skip_cert_verify": {
+         "value": true
        }
      }' \
      --product-network '{
