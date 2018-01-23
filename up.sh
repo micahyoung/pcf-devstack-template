@@ -258,16 +258,16 @@ bin/om \
     --stemcell bin/$PAS_STEMCELL_GLOB \
 ;
 
-#if ! grep -q $PAS_PRODUCT_NAME <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USERNAME -p $OPSMAN_PASSWORD deployed-products); then
-#  bin/om \
-#    --target https://$OPSMAN_IP \
-#    --username $OPSMAN_USERNAME \
-#    --password $OPSMAN_PASSWORD \
-#    --skip-ssl-validation \
-#    stage-product \
-#      --product-name $PAS_PRODUCT_NAME \
-#      --product-version $PAS_VERSION \
-#  ;
+if ! grep -q $PAS_PRODUCT_NAME <(bin/om -t https://$OPSMAN_IP -k -u $OPSMAN_USERNAME -p $OPSMAN_PASSWORD deployed-products); then
+  bin/om \
+    --target https://$OPSMAN_IP \
+    --username $OPSMAN_USERNAME \
+    --password $OPSMAN_PASSWORD \
+    --skip-ssl-validation \
+    stage-product \
+      --product-name $PAS_PRODUCT_NAME \
+      --product-version $PAS_VERSION \
+  ;
 
   bin/om \
     --target https://$OPSMAN_IP \
@@ -384,6 +384,30 @@ bin/om \
     --username $OPSMAN_USERNAME \
     --password $OPSMAN_PASSWORD \
     --skip-ssl-validation \
+    --format json \
+    errands \
+      --product-name $PAS_PRODUCT_NAME \
+  | grep name | cut -d'"' -f4 \
+  | while read errand_name; do
+    bin/om \
+      --target https://$OPSMAN_IP \
+      --username $OPSMAN_USERNAME \
+      --password $OPSMAN_PASSWORD \
+      --skip-ssl-validation \
+      --format json \
+      set-errand-state \
+        --product-name $PAS_PRODUCT_NAME \
+        --errand-name $errand_name \
+        --post-deploy-state disabled \
+    ;
+    done \
+  ;
+
+  bin/om \
+    --target https://$OPSMAN_IP \
+    --username $OPSMAN_USERNAME \
+    --password $OPSMAN_PASSWORD \
+    --skip-ssl-validation \
     apply-changes \
   ;
-#fi
+fi
