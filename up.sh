@@ -31,10 +31,10 @@ OPSMAN_DECRYPTION_PASSWORD=password
 PAS_STEMCELL_GLOB='bosh-stemcell-*-openstack-kvm-ubuntu-trusty-go_agent-raw.tgz' 
 PAS_STEMCELL_VERSION=3445.19
 
-set +o nounset
-source ~stack/devstack/openrc $OPENSTACK_USERNAME $OPENSTACK_PROJECT
-set -o nounset
-
+export OS_PROJECT_NAME=$OPENSTACK_PROJECT
+export OS_USERNAME=$OPENSTACK_USERNAME
+export OS_PASSWORD=$OPENSTACK_PASSWORD
+export OS_AUTH_URL=http://$OPENSTACK_HOST/v2.0
 set -x
 
 mkdir -p bin
