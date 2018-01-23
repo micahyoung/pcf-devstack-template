@@ -59,14 +59,6 @@ if ! [ -f bin/fly ]; then
   chmod +x bin/fly
 fi
 
-fly --target c login --concourse-url $CONCOURSE_URL
-fly --target c set-pipeline \
-  --pipeline install-pcf \
-  --config bin/pcf-pipelines/install-pcf/openstack/pipeline.yml \
-  --load-vars-from state/params.yml \
-  ;
-exit
-
 if ! [ -d bin/pcf-pipelines ]; then
   bin/pivnet \
     download-product-files \
@@ -81,6 +73,14 @@ if ! [ -d bin/pcf-pipelines ]; then
   rm bin/pcf-pipelines-*.tgz
 fi
 exit
+
+#fly --target c login --concourse-url $CONCOURSE_URL
+#fly --target c set-pipeline \
+#  --pipeline install-pcf \
+#  --config bin/pcf-pipelines/install-pcf/openstack/pipeline.yml \
+#  --load-vars-from state/params.yml \
+#  ;
+#exit
 
 if ! [ -f bin/pcf-openstack.raw ]; then
   bin/pivnet \
