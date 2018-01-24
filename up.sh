@@ -77,15 +77,78 @@ if ! [ -d bin/pcf-pipelines ]; then
   tar -xf bin/pcf-pipelines-*.tgz -C bin/
   rm bin/pcf-pipelines-*.tgz
 fi
-exit
+
+cat > bin/remote-worker-tags-opsfile.yml <<EOF
+- op: remove
+  path: /jobs/name=upload-opsman-image/plan/0/aggregate/get=ops-manager/tags
+- op: remove
+  path: /jobs/name=upload-opsman-image/plan/task=upload/tags
+- op: remove
+  path: /jobs/name=create-infrastructure/ensure/tags
+- op: remove
+  path: /jobs/name=create-infrastructure/plan/0/aggregate/get=pcf-pipelines/tags
+- op: remove
+  path: /jobs/name=create-infrastructure/plan/0/aggregate/get=terraform-state/tags
+- op: remove
+  path: /jobs/name=create-infrastructure/plan/0/aggregate/get=pivnet-opsmgr/tags
+- op: remove
+  path: /jobs/name=create-infrastructure/plan/task=create-infrastructure/tags
+- op: remove
+  path: /jobs/name=configure-director/plan/0/aggregate/get=pcf-pipelines/tags
+- op: remove
+  path: /jobs/name=configure-director/plan/0/aggregate/get=ops-manager/tags
+- op: remove
+  path: /jobs/name=configure-director/plan/task=configure-auth/tags
+- op: remove
+  path: /jobs/name=configure-director/plan/task=configure/tags
+- op: remove
+  path: /jobs/name=deploy-director/plan/0/aggregate/get=pcf-pipelines/tags
+- op: remove
+  path: /jobs/name=deploy-director/plan/0/aggregate/get=ops-manager/tags
+- op: remove
+  path: /jobs/name=deploy-director/plan/task=apply-changes/tags
+- op: remove
+  path: /jobs/name=upload-ert/plan/0/aggregate/get=pcf-pipelines/tags
+- op: remove
+  path: /jobs/name=upload-ert/plan/0/aggregate/get=pivnet-product/tags
+- op: remove
+  path: /jobs/name=upload-ert/plan/0/aggregate/get=ops-manager/tags
+- op: remove
+  path: /jobs/name=upload-ert/plan/task=upload-tile/tags
+- op: remove
+  path: /jobs/name=upload-ert/plan/task=stage-tile/tags
+- op: remove
+  path: /jobs/name=configure-ert/plan/0/aggregate/get=pcf-pipelines/tags
+- op: remove
+  path: /jobs/name=configure-ert/plan/0/aggregate/get=pivnet-product/tags
+- op: remove
+  path: /jobs/name=configure-ert/plan/task=configure/tags
+- op: remove
+  path: /jobs/name=deploy-ert/plan/0/aggregate/get=pcf-pipelines/tags
+- op: remove
+  path: /jobs/name=deploy-ert/plan/0/aggregate/get=pivnet-product/tags
+- op: remove
+  path: /jobs/name=deploy-ert/plan/task=deploy/tags
+- op: remove
+  path: /jobs/name=wipe-env/ensure/tags
+- op: remove
+  path: /jobs/name=wipe-env/plan/0/aggregate/get=pcf-pipelines/tags
+- op: remove
+  path: /jobs/name=wipe-env/plan/0/aggregate/get=terraform-state/tags
+EOF
+
+cat bin/pcf-pipelines/install-pcf/openstack/pipeline.yml | yaml-patch -o bin/remote-worker-tags-opsfile.yml > bin/install-pcf-pipeline.yml
 
 fly --target c login --concourse-url $CONCOURSE_URL
 
 fly --target c set-pipeline \
   --pipeline install-pcf \
-  --config bin/pcf-pipelines/install-pcf/openstack/pipeline.yml \
+  --config bin/install-pcf-pipeline.yml \
   --load-vars-from state/params.yml \
+  --non-interactive \
   ;
+
+fly --target c unpause-pipeline --pipeline install-pcf
 exit
 
 if ! [ -f bin/pcf-openstack.raw ]; then
