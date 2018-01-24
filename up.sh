@@ -256,7 +256,7 @@ if ! [ -f bin/$PAS_STEMCELL_GLOB ]; then
 fi
 
 bin/om \
-  --target https://10.0.0.3 \
+  --target https://$OPSMAN_IP \
   --skip-ssl-validation \
   --username admin \
   --password password \
