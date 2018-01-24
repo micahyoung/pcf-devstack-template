@@ -54,6 +54,11 @@ if ! [ -f bin/om ]; then
   chmod +x bin/om
 fi
 
+if ! [ -f bin/yaml-patch ]; then
+  curl -L "https://github.com/krishicks/yaml-patch/releases/download/v0.0.10/yaml_patch_linux" > bin/yaml-patch
+  chmod +x bin/yaml-patch
+fi
+
 if ! [ -f bin/fly ]; then
   curl -L "$CONCOURSE_URL/api/v1/cli?arch=amd64&platform=linux" > bin/fly
   chmod +x bin/fly
