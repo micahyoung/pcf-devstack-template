@@ -74,13 +74,14 @@ if ! [ -d bin/pcf-pipelines ]; then
 fi
 exit
 
-#fly --target c login --concourse-url $CONCOURSE_URL
-#fly --target c set-pipeline \
-#  --pipeline install-pcf \
-#  --config bin/pcf-pipelines/install-pcf/openstack/pipeline.yml \
-#  --load-vars-from state/params.yml \
-#  ;
-#exit
+fly --target c login --concourse-url $CONCOURSE_URL
+
+fly --target c set-pipeline \
+  --pipeline install-pcf \
+  --config bin/pcf-pipelines/install-pcf/openstack/pipeline.yml \
+  --load-vars-from state/params.yml \
+  ;
+exit
 
 if ! [ -f bin/pcf-openstack.raw ]; then
   bin/pivnet \
