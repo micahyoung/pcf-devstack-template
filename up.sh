@@ -76,7 +76,7 @@ if ! [ -d bin/pcf-pipelines ]; then
   rm bin/pcf-pipelines-*.tgz
 fi
 
-cat > bin/remote-worker-tags-opsfile.yml <<EOF
+cat > state/remote-worker-tags-opsfile.yml <<EOF
 - op: remove
   path: /jobs/name=upload-opsman-image/plan/0/aggregate/get=ops-manager/tags
 - op: remove
@@ -139,7 +139,7 @@ fly --target c login --concourse-url $CONCOURSE_URL
 
 fly --target c set-pipeline \
   --pipeline install-pcf \
-  --config <(yaml-patch -o bin/remote-worker-tags-opsfile.yml < bin/pcf-pipelines/install-pcf/openstack/pipeline.yml) \
+  --config <(yaml-patch -o state/remote-worker-tags-opsfile.yml < bin/pcf-pipelines/install-pcf/openstack/pipeline.yml) \
   --load-vars-from state/params.yml \
   --non-interactive \
   ;
