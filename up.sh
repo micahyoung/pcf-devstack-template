@@ -17,6 +17,8 @@ source ./state/env.sh
 : ${CONCOURSE_URL:?"!"}
 : ${S3_ACCESS_KEY:?"!"}
 : ${S3_SECRET_KEY:?"!"}
+OPENSTACK_AUTH_URL=http://$OPENSTACK_HOST/v3.0
+OPENSTACK_API_VERSION=3.0
 OPENSTACK_RESOURCE_PREFIX=devstack-
 OPENSTACK_USERNAME=admin
 OPENSTACK_PASSWORD=password
@@ -193,8 +195,8 @@ security_group:                    # Name of security group created by terraform
 # These are simply the project users credentials, downloaded from Horizon.
 # The pre_os_cacert is the root CA cert, only needed if the openstack API's
 # are fronted by a self-signed SSL certificate.
-os_auth_url: http://$OPENSTACK_HOST/v3.0
-os_identity_api_version: 3.0
+os_auth_url: $OPENSTACK_AUTH_URL
+os_identity_api_version: $OPENSTACK_API_VERSION
 os_username: $OPENSTACK_USERNAME
 os_password: $OPENSTACK_PASSWORD
 os_user_domain_name: CHANGEME
