@@ -125,7 +125,7 @@ cat > state/remote-worker-tags-opsfile.yml <<EOF
 - op: remove
   path: /jobs/name=wipe-env/plan/0/aggregate/get=terraform-state/tags
 - op: remove
-path: /jobs/name=wipe-env/plan/task=wipe-env/tags
+  path: /jobs/name=wipe-env/plan/task=wipe-env/tags
 EOF
 
 cat > state/bugfix-install-pcf-create-infrastructure-opsfile.yml <<EOF
