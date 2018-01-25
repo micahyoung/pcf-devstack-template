@@ -32,16 +32,16 @@ mkdir -p bin
 PATH=$PATH:$(pwd)/bin
 
 if ! [ -f bin/pivnet ]; then
-  curl -L "https://github.com/pivotal-cf/pivnet-cli/releases/download/v0.0.49/pivnet-darwin-amd64-0.0.49" > bin/pivnet
-  #curl -L "https://github.com/pivotal-cf/pivnet-cli/releases/download/v0.0.49/pivnet-linux-amd64-0.0.49" > bin/pivnet
+  #curl -L "https://github.com/pivotal-cf/pivnet-cli/releases/download/v0.0.49/pivnet-darwin-amd64-0.0.49" > bin/pivnet
+  curl -L "https://github.com/pivotal-cf/pivnet-cli/releases/download/v0.0.49/pivnet-linux-amd64-0.0.49" > bin/pivnet
   chmod +x bin/pivnet
 fi
 
 bin/pivnet login --api-token=$PIVNET_API_TOKEN
 
 if ! [ -f bin/yaml-patch ]; then
-  curl -L "https://github.com/krishicks/yaml-patch/releases/download/v0.0.10/yaml_patch_darwin" > bin/yaml-patch
-  #kcurl -L "https://github.com/krishicks/yaml-patch/releases/download/v0.0.10/yaml_patch_linux" > bin/yaml-patch
+  #curl -L "https://github.com/krishicks/yaml-patch/releases/download/v0.0.10/yaml_patch_darwin" > bin/yaml-patch
+  curl -L "https://github.com/krishicks/yaml-patch/releases/download/v0.0.10/yaml_patch_linux" > bin/yaml-patch
   chmod +x bin/yaml-patch
 fi
 
