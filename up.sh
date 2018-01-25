@@ -19,7 +19,9 @@ source ./state/env.sh
 : ${S3_SECRET_KEY:?"!"}
 : ${EXTERNAL_NET_ID:?"!"}
 : ${EXTERNAL_NET_NAME:?"!"}
-: ${HAPROXY_IPS:?"!"}
+: ${EXTERNAL_NET_NAME:?"!"}
+: ${OPENSTACK_KEYPAIR_NAME:?"!"}
+: ${OPENSTACK_KEYPAIR_VAL:?"!"}
 OPENSTACK_AUTH_URL=http://$OPENSTACK_HOST/v2.0
 OPENSTACK_API_VERSION=2.0
 OPENSTACK_RESOURCE_PREFIX=devstack
@@ -261,8 +263,8 @@ bosh_database_type: internal # Type of DB to use (internal)
 # TODO: Add ability to use s3 blobstore
 bosh_blobstore_type: local   # Type of blobstore to use (local)
 
-os_keypair_name: CHANGEME   # Keypair to use for bosh VMs
-os_private_key:  CHANGEME   # Private key for keypair
+os_keypair_name: $OPENSTACK_KEYPAIR_NAME # Keypair to use for bosh VMs
+os_private_key:  $OPENSTACK_KEYPAIR_VAL # Private key for keypair
 
 # Network configuration for Ops Director
 icmp_checks_enabled: true    # Enable or disable ICMP checks
