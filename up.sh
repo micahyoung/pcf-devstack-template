@@ -23,6 +23,7 @@ source ./state/env.sh
 : ${SYSTEM_DOMAIN:?"!"}
 : ${APPS_DOMAIN:?"!"}
 : ${OPSMAN_PUBKEY:?"!"}
+: ${OPSMAN_VOLUME_SIZE_GB:?"!"}
 OPENSTACK_AUTH_URL=http://$OPENSTACK_HOST/v2.0
 OPENSTACK_API_VERSION=2.0
 OPENSTACK_RESOURCE_PREFIX=devstack
@@ -232,7 +233,7 @@ pre_os_cacert: # Set if needed (see above)
 
 opsman_public_key: $OPSMAN_PUBKEY # The public key of your opsman key
 
-opsman_volume_size: 100  # OpsMan VM disk size in GB
+opsman_volume_size: $OPSMAN_VOLUME_SIZE_GB  # OpsMan VM disk size in GB
 
 # AZ configuration for Ops Director
 az_01_name: CHANGEME
