@@ -28,6 +28,7 @@ OPSMAN_IP=10.0.0.3
 OPSMAN_USERNAME=admin
 OPSMAN_PASSWORD=password
 OPSMAN_DECRYPTION_PASSWORD=password
+INFRA_NETWORK_NAME=infra-network
 
 set -x
 
@@ -159,7 +160,7 @@ tf_aws_secret_key: $S3_SECRET_KEY
 
 # TODO: Allow multiple DNS servers for each net (currently only 1 can be set)
 
-infra_network:                               # Infra Network Name
+infra_network: $INFRA_NETWORK_NAME           # Infra Network Name
 infra_subnet_cidr: 10.1.0.0/24               # Infra Network Subnet CIDR
 infra_gateway: 10.1.0.1                      # Infra Network Gateway
 infra_reserved_ip_ranges: 10.1.0.0-10.1.0.9  # Infra Network Reserved IP Ranges
