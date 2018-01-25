@@ -398,7 +398,7 @@ fly --target c login --concourse-url $CONCOURSE_URL
 
 fly --target c set-pipeline \
   --pipeline install-pcf \
-  --config <(echo $PATCHED_PIPELINE) \
+  --config <(echo "$PATCHED_PIPELINE") \
   --load-vars-from state/install-pcf-params.yml \
   --non-interactive \
   ;
