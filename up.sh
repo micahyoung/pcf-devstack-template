@@ -29,6 +29,9 @@ OPSMAN_USERNAME=admin
 OPSMAN_PASSWORD=password
 OPSMAN_DECRYPTION_PASSWORD=password
 INFRA_NETWORK_NAME=infra-network
+SERVICES_NETWORK_NAME=services-network
+ERT_NETWORK_NAME=ert-network
+DYNAMIC_NETWORK_NAME=dynamic-network
 
 set -x
 
@@ -167,21 +170,21 @@ infra_reserved_ip_ranges: 10.1.0.0-10.1.0.9  # Infra Network Reserved IP Ranges
 infra_dns:                                   # Infra Network DNS Server
 infra_nw_azs:                                # Infra Network AZs
 
-ert_network:                               # ERT Network Name
+ert_network: $ERT_NETWORK_NAME             # ERT Network Name
 ert_subnet_cidr: 10.2.0.0/24               # ERT Network Subnet CIDR
 ert_gateway: 10.2.0.1                      # ERT Network Gateway
 ert_reserved_ip_ranges: 10.2.0.0-10.2.0.9  # ERT Network Reserved IP Ranges
 ert_dns:                                   # ERT Network DNS Server
 ert_nw_azs:                                # ERT Network AZs
 
-services_network:                               # Services Network Name
+services_network: $SERVICES_NETWORK_NAME        # Services Network Name
 services_subnet_cidr: 10.3.0.0/24               # Services Network Subnet CIDR
 services_gateway: 10.3.0.1                      # Services Network Gateway
 services_reserved_ip_ranges: 10.3.0.0-10.3.0.9  # Services Network Reserved IP Ranges
 services_dns:                                   # Services Network DNS Server
 services_nw_azs:                                # Services Network AZs
 
-dynamic_services_network:                               # Dynamic Services Network Name
+dynamic_services_network: $DYNAMIC_NETWORK_NAME         # Dynamic Services Network Name
 dynamic_services_subnet_cidr: 10.4.0.0/24               # Dynamic Services Network Subnet CIDR
 dynamic_services_gateway: 10.4.0.1                      # Dynamic Services Network Gateway
 dynamic_services_reserved_ip_ranges: 10.4.0.0-10.4.0.9  # Dynamic Services Network Reserved IP Ranges
