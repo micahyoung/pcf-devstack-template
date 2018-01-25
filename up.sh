@@ -38,8 +38,14 @@ INFRA_NETWORK_NAME=infra-network
 INFRA_NETWORK_DNS=8.8.8.8
 INFRA_NETWORK_AZS=nova
 SERVICES_NETWORK_NAME=services-network
+SERVICES_NETWORK_DNS=8.8.8.8
+SERVICES_NETWORK_AZS=8.8.8.8
 ERT_NETWORK_NAME=ert-network
+ERT_NETWORK_DNS=8.8.8.8
+ERT_NETWORK_AZS=nova
 DYNAMIC_NETWORK_NAME=dynamic-network
+DYNAMIC_NETWORK_DNS=8.8.8.8
+DYNAMIC_NETWORK_AZS=nova
 SECURITY_GROUP=pcf
 
 set -x
@@ -183,22 +189,22 @@ ert_network: $ERT_NETWORK_NAME             # ERT Network Name
 ert_subnet_cidr: 10.2.0.0/24               # ERT Network Subnet CIDR
 ert_gateway: 10.2.0.1                      # ERT Network Gateway
 ert_reserved_ip_ranges: 10.2.0.0-10.2.0.9  # ERT Network Reserved IP Ranges
-ert_dns:                                   # ERT Network DNS Server
-ert_nw_azs:                                # ERT Network AZs
+ert_dns: $ERT_NETWORK_DNS                  # ERT Network DNS Server
+ert_nw_azs: $ERT_NETWORK_AZS               # ERT Network AZs
 
 services_network: $SERVICES_NETWORK_NAME        # Services Network Name
 services_subnet_cidr: 10.3.0.0/24               # Services Network Subnet CIDR
 services_gateway: 10.3.0.1                      # Services Network Gateway
 services_reserved_ip_ranges: 10.3.0.0-10.3.0.9  # Services Network Reserved IP Ranges
-services_dns:                                   # Services Network DNS Server
-services_nw_azs:                                # Services Network AZs
+services_dns: $SERVICES_NETWORK_DNS             # Services Network DNS Server
+services_nw_azs: $SERVICES_NETWORK_AZS          # Services Network AZs
 
 dynamic_services_network: $DYNAMIC_NETWORK_NAME         # Dynamic Services Network Name
 dynamic_services_subnet_cidr: 10.4.0.0/24               # Dynamic Services Network Subnet CIDR
 dynamic_services_gateway: 10.4.0.1                      # Dynamic Services Network Gateway
 dynamic_services_reserved_ip_ranges: 10.4.0.0-10.4.0.9  # Dynamic Services Network Reserved IP Ranges
-dynamic_services_dns:                                   # Dynamic Services Network DNS Server
-dynamic_services_nw_azs:                                # Dynamic Services Network AZs
+dynamic_services_dns: $DYNAMIC_NETWORK_DNS              # Dynamic Services Network DNS Server
+dynamic_services_nw_azs: $DYNAMIC_NETWORK_AZS           # Dynamic Services Network AZs
 
 container_networking_nw_cidr: 10.255.0.0/16 # C2C Networking network CIDR
 
