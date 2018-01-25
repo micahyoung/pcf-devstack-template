@@ -27,6 +27,7 @@ OPENSTACK_USERNAME=admin
 OPENSTACK_PASSWORD=password
 OPENSTACK_PROJECT=demo
 OPENSTACK_REGION=RegionOne
+OPENSTACK_NETWORKING_MODEL=neutron
 OPSMAN_IP=10.0.0.3
 OPSMAN_USERNAME=admin
 OPSMAN_PASSWORD=password
@@ -215,7 +216,7 @@ os_project_id: CHANGEME
 os_tenant: CHANGEME
 os_region_name: $OPENSTACK_REGION
 os_interface: public
-os_networking_model: CHANGEME (nova|neutron)
+os_networking_model: $OPENSTACK_NETWORKING_MODEL
 pre_os_cacert: # Set if needed (see above)
 
 opsman_public_key: CHANGEME # The public key of your opsman key
