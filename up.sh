@@ -45,9 +45,9 @@ if ! [ -f bin/pivnet ]; then
   chmod +x bin/pivnet
 fi
 
-#if grep "Please login" <(bin/pivnet products); then
-#  bin/pivnet login --api-token=$PIVNET_API_TOKEN
-#fi
+if grep "Please login" <(bin/pivnet products); then
+  bin/pivnet login --api-token=$PIVNET_API_TOKEN
+fi
 
 if ! [ -f bin/om ]; then
   curl -L "https://github.com/pivotal-cf/om/releases/download/0.29.0/om-linux" > bin/om
