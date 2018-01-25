@@ -17,6 +17,8 @@ source ./state/env.sh
 : ${CONCOURSE_URL:?"!"}
 : ${S3_ACCESS_KEY:?"!"}
 : ${S3_SECRET_KEY:?"!"}
+: ${EXTERNAL_NET_ID:?"!"}
+: ${EXTERNAL_NET_NAME:?"!"}
 OPENSTACK_AUTH_URL=http://$OPENSTACK_HOST/v2.0
 OPENSTACK_API_VERSION=2.0
 OPENSTACK_RESOURCE_PREFIX=devstack
@@ -32,6 +34,7 @@ INFRA_NETWORK_NAME=infra-network
 SERVICES_NETWORK_NAME=services-network
 ERT_NETWORK_NAME=ert-network
 DYNAMIC_NETWORK_NAME=dynamic-network
+SECURITY_GROUP=pcf
 
 set -x
 
@@ -193,10 +196,10 @@ dynamic_services_nw_azs:                                # Dynamic Services Netwo
 
 container_networking_nw_cidr: 10.255.0.0/16 # C2C Networking network CIDR
 
-external_network_id: CHANGEME      # Set this to your floating IP network's id
-external_network: CHANGEME         # Set this to your floating IP network
+external_network_id: $EXTERNAL_NET_ID # Set this to your floating IP network's id
+external_network: $EXTERNAL_NET_NAME # Set this to your floating IP network
 
-security_group:                    # Name of security group created by terraform
+security_group: $SECURITY_GROUP    # Name of security group created by terraform
 
 # These are simply the project users credentials, downloaded from Horizon.
 # The pre_os_cacert is the root CA cert, only needed if the openstack API's
