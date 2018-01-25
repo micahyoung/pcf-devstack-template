@@ -12,8 +12,6 @@ source ./state/env.sh
 : ${PIVNET_API_TOKEN:?"!"}
 : ${NET_ID:?"!"}
 : ${OPENSTACK_HOST:?"!"}
-: ${SSH_PRIVATE_KEY:?"!"}
-: ${API_SSL_CERT:?"!"}
 : ${CONCOURSE_URL:?"!"}
 : ${S3_ACCESS_KEY:?"!"}
 : ${S3_SECRET_KEY:?"!"}
