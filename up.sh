@@ -19,6 +19,7 @@ source ./state/env.sh
 : ${S3_SECRET_KEY:?"!"}
 : ${EXTERNAL_NET_ID:?"!"}
 : ${EXTERNAL_NET_NAME:?"!"}
+: ${HAPROXY_IPS:?"!"}
 OPENSTACK_AUTH_URL=http://$OPENSTACK_HOST/v2.0
 OPENSTACK_API_VERSION=2.0
 OPENSTACK_RESOURCE_PREFIX=devstack
@@ -287,7 +288,7 @@ ssl_private_key:
 pcf_ert_saml_cert:
 pcf_ert_saml_key:
 
-haproxy_floating_ips: CHANGEME  # Floating IPs allocated to HAProxy on OpenStack
+haproxy_floating_ips: $HAPROXY_IPS # Floating IPs allocated to HAProxy on OpenStack
 haproxy_forward_tls: enable      # If enabled HAProxy will forward all requests to the router over TLS (enable|disable)
 haproxy_backend_ca: CHANGEME    # HAProxy will use the CA provided to verify the certificates provided by the router.
 
