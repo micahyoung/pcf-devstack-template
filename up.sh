@@ -20,6 +20,8 @@ source ./state/env.sh
 : ${EXTERNAL_NET_NAME:?"!"}
 : ${OPENSTACK_KEYPAIR_NAME:?"!"}
 : ${OPENSTACK_KEYPAIR_VAL:?"!"}
+: ${SYSTEM_DOMAIN:?"!"}
+: ${APPS_DOMAIN:?"!"}
 OPENSTACK_AUTH_URL=http://$OPENSTACK_HOST/v2.0
 OPENSTACK_API_VERSION=2.0
 OPENSTACK_RESOURCE_PREFIX=devstack
@@ -334,8 +336,8 @@ first_name_attribute:
 last_name_attribute:
 
 ## Deployment domain names
-system_domain: CHANGEME      # The System domain for your PCF environment e.g sys.pcf.example.com.
-apps_domain:   CHANGEME      # The Apps domain for your PCF environment e.g. cfapps.pcf.example.com.
+system_domain: $SYSTEM_DOMAIN # The System domain for your PCF environment e.g sys.pcf.example.com.
+apps_domain: $APPS_DOMAIN    # The Apps domain for your PCF environment e.g. cfapps.pcf.example.com.
 
 skip_cert_verify: false       # If true, disable SSL certificate verification for this environment.
 
