@@ -21,6 +21,7 @@ OPENSTACK_RESOURCE_PREFIX=devstack-
 OPENSTACK_USERNAME=admin
 OPENSTACK_PASSWORD=password
 OPENSTACK_PROJECT=demo
+OPENSTACK_REGION=RegionOne
 OPSMAN_IP=10.0.0.3
 OPSMAN_USERNAME=admin
 OPSMAN_PASSWORD=password
@@ -192,15 +193,15 @@ security_group:                    # Name of security group created by terraform
 # These are simply the project users credentials, downloaded from Horizon.
 # The pre_os_cacert is the root CA cert, only needed if the openstack API's
 # are fronted by a self-signed SSL certificate.
-os_auth_url: CHANGEME
-os_identity_api_version: CHANGEME
-os_username: CHANGEME
-os_password: CHANGEME
+os_auth_url: http://$OPENSTACK_HOST/v3.0
+os_identity_api_version: 3.0
+os_username: $OPENSTACK_USERNAME
+os_password: $OPENSTACK_PASSWORD
 os_user_domain_name: CHANGEME
-os_project_name: CHANGEME
+os_project_name: $OPENSTACK_PROJECT
 os_project_id: CHANGEME
 os_tenant: CHANGEME
-os_region_name: CHANGEME
+os_region_name: $OPENSTACK_REGION
 os_interface: public
 os_networking_model: CHANGEME (nova|neutron)
 pre_os_cacert: # Set if needed (see above)
