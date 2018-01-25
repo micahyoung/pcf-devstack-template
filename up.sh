@@ -15,12 +15,11 @@ source ./state/env.sh
 : ${SSH_PRIVATE_KEY:?"!"}
 : ${API_SSL_CERT:?"!"}
 : ${CONCOURSE_URL:?"!"}
-OPSMAN_PRODUCT_NAME=ops-manager
-OPSMAN_VERSION=1.11.18
-OPSMAN_GLOB="pcf-openstack-*.raw"
-PAS_PRODUCT_NAME="cf"
-PAS_VERSION=1.11.22
-PAS_GLOB="cf-*.pivotal"
+: ${S3_ACCESS_KEY:?"!"}
+: ${S3_SECRET_KEY:?"!"}
+OPENSTACK_RESOURCE_PREFIX=devstack-
+S3_ENDPOINT=s3.amazonaws.com
+S3_OUTPUT_BUCKET=devstack-install-pcf
 OPENSTACK_USERNAME=admin
 OPENSTACK_PASSWORD=password
 OPENSTACK_PROJECT=demo
@@ -28,13 +27,7 @@ OPSMAN_IP=10.0.0.3
 OPSMAN_USERNAME=admin
 OPSMAN_PASSWORD=password
 OPSMAN_DECRYPTION_PASSWORD=password
-PAS_STEMCELL_GLOB='bosh-stemcell-*-openstack-kvm-ubuntu-trusty-go_agent-raw.tgz' 
-PAS_STEMCELL_VERSION=3445.19
 
-export OS_PROJECT_NAME=$OPENSTACK_PROJECT
-export OS_USERNAME=$OPENSTACK_USERNAME
-export OS_PASSWORD=$OPENSTACK_PASSWORD
-export OS_AUTH_URL=http://$OPENSTACK_HOST/v2.0
 set -x
 
 mkdir -p bin
