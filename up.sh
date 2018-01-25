@@ -35,6 +35,8 @@ OPSMAN_USERNAME=admin
 OPSMAN_PASSWORD=password
 OPSMAN_DECRYPTION_PASSWORD=password
 INFRA_NETWORK_NAME=infra-network
+INFRA_NETWORK_DNS=8.8.8.8
+INFRA_NETWORK_AZS=nova
 SERVICES_NETWORK_NAME=services-network
 ERT_NETWORK_NAME=ert-network
 DYNAMIC_NETWORK_NAME=dynamic-network
@@ -174,8 +176,8 @@ infra_network: $INFRA_NETWORK_NAME           # Infra Network Name
 infra_subnet_cidr: 10.1.0.0/24               # Infra Network Subnet CIDR
 infra_gateway: 10.1.0.1                      # Infra Network Gateway
 infra_reserved_ip_ranges: 10.1.0.0-10.1.0.9  # Infra Network Reserved IP Ranges
-infra_dns:                                   # Infra Network DNS Server
-infra_nw_azs:                                # Infra Network AZs
+infra_dns: $INFRA_NETWORK_DNS                # Infra Network DNS Server
+infra_nw_azs: $INFRA_NETWORK_AZS             # Infra Network AZs
 
 ert_network: $ERT_NETWORK_NAME             # ERT Network Name
 ert_subnet_cidr: 10.2.0.0/24               # ERT Network Subnet CIDR
