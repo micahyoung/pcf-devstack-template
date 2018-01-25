@@ -18,8 +18,6 @@ source ./state/env.sh
 : ${S3_ACCESS_KEY:?"!"}
 : ${S3_SECRET_KEY:?"!"}
 OPENSTACK_RESOURCE_PREFIX=devstack-
-S3_ENDPOINT=s3.amazonaws.com
-S3_OUTPUT_BUCKET=devstack-install-pcf
 OPENSTACK_USERNAME=admin
 OPENSTACK_PASSWORD=password
 OPENSTACK_PROJECT=demo
