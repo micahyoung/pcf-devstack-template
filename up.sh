@@ -124,8 +124,8 @@ cat > state/remote-worker-tags-opsfile.yml <<EOF
 EOF
 
 cat > state/bugfix-install-pcf-create-infrastructure-opsfile.yml <<EOF
-- op: replace
-  path: /jobs/name=create-infrastructure/plan/task=create-infrastructure/input_mapping?
+- op: add
+  path: /jobs/name=create-infrastructure/plan/task=create-infrastructure/input_mapping
   value:
     ops-manager: pivnet-opsmgr
 EOF
@@ -387,14 +387,15 @@ syslog_adapter_instances: 3
 internet_connected: true
 EOF
 
-fly --target c login --concourse-url $CONCOURSE_URL
-
 PATCHED_PIPELINE=$(
   yaml-patch \
     -o state/remote-worker-tags-opsfile.yml \
     -o state/bugfix-install-pcf-create-infrastructure-opsfile.yml \
     < bin/pcf-pipelines/install-pcf/openstack/pipeline.yml
 )
+
+fly --target c login --concourse-url $CONCOURSE_URL
+
 fly --target c set-pipeline \
   --pipeline install-pcf \
   --config <() \
