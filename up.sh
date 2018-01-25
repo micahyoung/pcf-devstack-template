@@ -151,6 +151,8 @@ fly --target c set-pipeline \
 fly --target c unpause-pipeline --pipeline install-pcf
 exit
 
+#TODO: touch terraform.tfstate in s3 bucket
+
 if ! [ -f bin/pcf-openstack.raw ]; then
   bin/pivnet \
     download-product-files \
