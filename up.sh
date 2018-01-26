@@ -251,8 +251,8 @@ opsman_flavor: m1.xlarge                  # Ops man VM flavor
 opsman_domain_or_ip_address: $OPSMAN_FQDN # FQDN to access Ops Manager without protocol (will use https), ex: opsmgr.example.com
 
 # Either opsman_client_id/opsman_client_secret or opsman_admin_username/opsman_admin_password needs to be specified
-#opsman_client_id: CHANGEME                # Client ID for Ops Manager admin account
-#opsman_client_secret: CHANGEME            # Client Secret for Ops Manager admin account
+opsman_client_id:                         # Client ID for Ops Manager admin account
+opsman_client_secret:                     # Client Secret for Ops Manager admin account
 opsman_admin_username: $OPSMAN_ADMIN_USERNAME # Username for Ops Manager admin account
 opsman_admin_password: $OPSMAN_ADMIN_PASSWORD # Password for Ops Manager admin account
 
