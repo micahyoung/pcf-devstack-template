@@ -25,6 +25,9 @@ source ./state/env.sh
 : ${OPSMAN_PUBKEY:?"!"}
 : ${OPSMAN_VOLUME_SIZE_GB:?"!"}
 : ${OPSMAN_FQDN:?"!"}
+: ${OPSMAN_ADMIN_NAME:?"!"}
+: ${OPSMAN_ADMIN_PASSWORD:?"!"}
+: ${OPSMAN_DECRYPT_PASSWORD:?"!"}
 OPENSTACK_AUTH_URL=http://$OPENSTACK_HOST/v2.0
 OPENSTACK_API_VERSION=2.0
 OPENSTACK_RESOURCE_PREFIX=devstack
@@ -34,9 +37,6 @@ OPENSTACK_PROJECT=demo
 OPENSTACK_REGION=RegionOne
 OPENSTACK_NETWORKING_MODEL=neutron
 OPSMAN_IP=10.0.0.3
-OPSMAN_USERNAME=admin
-OPSMAN_PASSWORD=password
-OPSMAN_DECRYPTION_PASSWORD=password
 INFRA_NETWORK_NAME=infra-network
 INFRA_NETWORK_DNS=8.8.8.8
 INFRA_NETWORK_AZS=nova
@@ -251,12 +251,12 @@ opsman_flavor: m1.xlarge                  # Ops man VM flavor
 opsman_domain_or_ip_address: $OPSMAN_FQDN # FQDN to access Ops Manager without protocol (will use https), ex: opsmgr.example.com
 
 # Either opsman_client_id/opsman_client_secret or opsman_admin_username/opsman_admin_password needs to be specified
-opsman_client_id: CHANGEME                # Client ID for Ops Manager admin account
-opsman_client_secret: CHANGEME            # Client Secret for Ops Manager admin account
-opsman_admin_username: admin              # Username for Ops Manager admin account
-opsman_admin_password: CHANGEME           # Password for Ops Manager admin account
+#opsman_client_id: CHANGEME                # Client ID for Ops Manager admin account
+#opsman_client_secret: CHANGEME            # Client Secret for Ops Manager admin account
+opsman_admin_username: $OPSMAN_ADMIN_USERNAME # Username for Ops Manager admin account
+opsman_admin_password: $OPSMAN_ADMIN_PASSWORD # Password for Ops Manager admin account
 
-om_decryption_pwd: CHANGEME               # Decryption password for Ops Manager exported settings
+om_decryption_pwd: $OPSMAN_DECRYPT_PASSWORD # Decryption password for Ops Manager exported settings
 
 # IaaS configuration for Ops Director
 ignore_server_az: false # If true, set the volume AZ to the default AZ.
