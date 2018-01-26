@@ -34,6 +34,7 @@ OPENSTACK_RESOURCE_PREFIX=devstack
 OPENSTACK_USERNAME=admin
 OPENSTACK_PASSWORD=password
 OPENSTACK_PROJECT=demo
+OPENSTACK_TENANT=demo
 OPENSTACK_REGION=RegionOne
 OPENSTACK_NETWORKING_MODEL=neutron
 OPSMAN_IP=10.0.0.3
@@ -229,7 +230,7 @@ os_password: $OPENSTACK_PASSWORD
 os_user_domain_name:
 os_project_name: $OPENSTACK_PROJECT
 os_project_id:
-os_tenant:
+os_tenant: $OPENSTACK_TENANT
 os_region_name: $OPENSTACK_REGION
 os_interface: public
 os_networking_model: $OPENSTACK_NETWORKING_MODEL
