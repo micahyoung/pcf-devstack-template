@@ -19,7 +19,7 @@ source ./state/env.sh
 : ${EXTERNAL_NET_NAME:?"!"}
 : ${EXTERNAL_NET_NAME:?"!"}
 : ${OPENSTACK_KEYPAIR_NAME:?"!"}
-: ${OPENSTACK_KEYPAIR_VAL:?"!"}
+: ${OPENSTACK_KEYPAIR_BASE64:?"!"}
 : ${SYSTEM_DOMAIN:?"!"}
 : ${APPS_DOMAIN:?"!"}
 : ${OPSMAN_PUBKEY:?"!"}
@@ -37,17 +37,16 @@ OPENSTACK_PROJECT=demo
 OPENSTACK_TENANT=demo
 OPENSTACK_REGION=RegionOne
 OPENSTACK_NETWORKING_MODEL=neutron
-OPSMAN_IP=10.0.0.3
-INFRA_NETWORK_NAME=infra-network
+INFRA_NETWORK_NAME=${OPENSTACK_RESOURCE_PREFIX}-infra-net
 INFRA_NETWORK_DNS=8.8.8.8
 INFRA_NETWORK_AZS=nova
-SERVICES_NETWORK_NAME=services-network
+SERVICES_NETWORK_NAME=${OPENSTACK_RESOURCE_PREFIX}-services-net
 SERVICES_NETWORK_DNS=8.8.8.8
-SERVICES_NETWORK_AZS=8.8.8.8
-ERT_NETWORK_NAME=ert-network
+SERVICES_NETWORK_AZS=nova
+ERT_NETWORK_NAME=${OPENSTACK_RESOURCE_PREFIX}-ert-net
 ERT_NETWORK_DNS=8.8.8.8
 ERT_NETWORK_AZS=nova
-DYNAMIC_NETWORK_NAME=dynamic-network
+DYNAMIC_NETWORK_NAME=${OPENSTACK_RESOURCE_PREFIX}-dynamic-services-net
 DYNAMIC_NETWORK_DNS=8.8.8.8
 DYNAMIC_NETWORK_AZS=nova
 SECURITY_GROUP=bosh
@@ -280,7 +279,7 @@ bosh_database_type: internal # Type of DB to use (internal)
 bosh_blobstore_type: local   # Type of blobstore to use (local)
 
 os_keypair_name: $OPENSTACK_KEYPAIR_NAME # Keypair to use for bosh VMs
-os_private_key:  $OPENSTACK_KEYPAIR_VAL # Private key for keypair
+os_private_key: !!binary $OPENSTACK_KEYPAIR_BASE64
 
 # Network configuration for Ops Director
 icmp_checks_enabled: true    # Enable or disable ICMP checks
