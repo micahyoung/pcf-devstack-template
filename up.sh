@@ -13,8 +13,10 @@ source ./state/env.sh
 : ${NET_ID:?"!"}
 : ${OPENSTACK_HOST:?"!"}
 : ${CONCOURSE_URL:?"!"}
+: ${S3_ENDPOINT:?"!"}
 : ${S3_ACCESS_KEY:?"!"}
 : ${S3_SECRET_KEY:?"!"}
+: ${S3_OUTPUT_BUCKET:?"!"}
 : ${EXTERNAL_NET_ID:?"!"}
 : ${EXTERNAL_NET_NAME:?"!"}
 : ${EXTERNAL_NET_NAME:?"!"}
@@ -28,6 +30,10 @@ source ./state/env.sh
 : ${OPSMAN_ADMIN_USERNAME:?"!"}
 : ${OPSMAN_ADMIN_PASSWORD:?"!"}
 : ${OPSMAN_DECRYPT_PASSWORD:?"!"}
+: ${HAPROXY_IPS:?"!"}
+: ${CONCOURSE_URL:?"!"}
+: ${OPENSTACK_KEYPAIR_NAME:?"!"}
+: ${OPENSTACK_KEYPAIR_BASE64:?"!"}
 OPENSTACK_AUTH_URL=http://$OPENSTACK_HOST/v2.0
 OPENSTACK_API_VERSION=2.0
 OPENSTACK_RESOURCE_PREFIX=devstack
