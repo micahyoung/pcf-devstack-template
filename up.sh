@@ -24,6 +24,7 @@ source ./state/env.sh
 : ${APPS_DOMAIN:?"!"}
 : ${OPSMAN_PUBKEY:?"!"}
 : ${OPSMAN_VOLUME_SIZE_GB:?"!"}
+: ${OPSMAN_FQDN:?"!"}
 OPENSTACK_AUTH_URL=http://$OPENSTACK_HOST/v2.0
 OPENSTACK_API_VERSION=2.0
 OPENSTACK_RESOURCE_PREFIX=devstack
@@ -48,7 +49,10 @@ ERT_NETWORK_AZS=nova
 DYNAMIC_NETWORK_NAME=dynamic-network
 DYNAMIC_NETWORK_DNS=8.8.8.8
 DYNAMIC_NETWORK_AZS=nova
-SECURITY_GROUP=devstack
+SECURITY_GROUP=bosh
+SINGLETON_AZ=nova
+AZ1=nova
+NTP_SERVERS=pool.ntp.org
 
 set -x
 
@@ -236,15 +240,15 @@ opsman_public_key: $OPSMAN_PUBKEY # The public key of your opsman key
 opsman_volume_size: $OPSMAN_VOLUME_SIZE_GB  # OpsMan VM disk size in GB
 
 # AZ configuration for Ops Director
-az_01_name: CHANGEME
+az_01_name: $AZ1
 #az_02_name: CHANGEME
 #az_03_name: CHANGEME
-ert_singleton_job_az: CHANGEME # AZ to use for deployment of ERT Singleton jobs
+ert_singleton_job_az: $SINGLETON_AZ # AZ to use for deployment of ERT Singleton jobs
 
 # Ops Manager VM Settings
 opsman_image: ops-manager                 # Prefix for the ops man glance image
 opsman_flavor: m1.xlarge                  # Ops man VM flavor
-opsman_domain_or_ip_address: CHANGEME     # FQDN to access Ops Manager without protocol (will use https), ex: opsmgr.example.com
+opsman_domain_or_ip_address: $OPSMAN_FQDN # FQDN to access Ops Manager without protocol (will use https), ex: opsmgr.example.com
 
 # Either opsman_client_id/opsman_client_secret or opsman_admin_username/opsman_admin_password needs to be specified
 opsman_client_id: CHANGEME                # Client ID for Ops Manager admin account
@@ -263,7 +267,7 @@ trusted_certificates:         # Optional. Trusted certificates to be deployed al
 vm_password_type: generate    # 'generate' or 'bosh_default'
 
 # Ops Director Config
-ntp_servers: CHANGEME       # Comma-separated list of NTP servers to use for VMs deployed by BOSH
+ntp_servers: $NTP_SERVERS       # Comma-separated list of NTP servers to use for VMs deployed by BOSH
 metrics_ip:                  # IP address of Pivotal Ops Metrics if installed
 resurrector_enabled: false   # Whether to enable BOSH VM resurrector
 max_threads: 30              # Max threads count for deploying VMs
