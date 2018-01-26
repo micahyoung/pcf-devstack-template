@@ -226,10 +226,10 @@ os_auth_url: $OPENSTACK_AUTH_URL
 os_identity_api_version: $OPENSTACK_API_VERSION
 os_username: $OPENSTACK_USERNAME
 os_password: $OPENSTACK_PASSWORD
-os_user_domain_name: CHANGEME
+os_user_domain_name:
 os_project_name: $OPENSTACK_PROJECT
-os_project_id: CHANGEME
-os_tenant: CHANGEME
+os_project_id:
+os_tenant:
 os_region_name: $OPENSTACK_REGION
 os_interface: public
 os_networking_model: $OPENSTACK_NETWORKING_MODEL
