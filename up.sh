@@ -166,7 +166,7 @@ cat > state/install-pcf-params.yml <<EOF
 # once the Elastic Runtime deployment completes, you will review and set the
 # appropriate application security groups.
 # See https://docs.pivotal.io/pivotalcf/opsguide/app-sec-groups.html
-security_acknowledgement: CHANGEME
+security_acknowledgement: X
 
 pivnet_token: $PIVNET_API_TOKEN         # Pivnet token for downloading resources from Pivnet. Find this token at https://network.pivotal.io/users/dashboard/edit-profile
 opsman_major_minor_version: ^1\.12\..*$ # PCF Ops Manager minor version to track
