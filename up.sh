@@ -33,7 +33,6 @@ source ./state/env.sh
 : ${HAPROXY_IPS:?"!"}
 : ${CONCOURSE_URL:?"!"}
 : ${OPENSTACK_KEYPAIR_NAME:?"!"}
-: ${OPENSTACK_KEYPAIR_BASE64:?"!"}
 OPENSTACK_AUTH_URL=http://$OPENSTACK_HOST/v2.0
 OPENSTACK_API_VERSION=2.0
 OPENSTACK_RESOURCE_PREFIX=devstack
@@ -88,7 +87,7 @@ if ! [ -d bin/pcf-pipelines ]; then
   bin/pivnet \
     download-product-files \
     --product-slug=pcf-automation \
-    --release-version=v0.22.0 \
+    --release-version=v0.23.0 \
     --glob=pcf-pipelines-*.tgz \
     --download-dir=bin/ \
     --accept-eula \
@@ -110,7 +109,7 @@ cat > state/remote-worker-tags-opsfile.yml <<EOF
 - op: remove
   path: /jobs/name=create-infrastructure/plan/0/aggregate/get=terraform-state/tags
 - op: remove
-  path: /jobs/name=create-infrastructure/plan/0/aggregate/get=pivnet-opsmgr/tags
+  path: /jobs/name=create-infrastructure/plan/0/aggregate/get=ops-manager/tags
 - op: remove
   path: /jobs/name=create-infrastructure/plan/task=create-infrastructure/tags
 - op: remove
@@ -167,6 +166,9 @@ cat > state/bugfix-install-pcf-create-infrastructure-opsfile.yml <<EOF
 EOF
 
 cat > state/install-pcf-params.yml <<EOF
+# Whether to allow SSH access to application instances
+allow_app_ssh_access: false             # Whether to allow SSH access to application instances
+
 # Setting appropriate Application Security Groups is critical for a secure
 # deployment. Change the value of the param below to "X" to acknowledge that
 # once the Elastic Runtime deployment completes, you will review and set the
@@ -365,7 +367,6 @@ disable_insecure_cookies: false # If true, disable insecure cookies on the route
 
 default_quota_memory_limit_mb: 10240
 default_quota_max_number_services: 1000
-allow_app_ssh_access: false             # Whether to allow SSH access to application instances
 
 # Request timeout for gorouter
 router_request_timeout_in_seconds: 900
@@ -440,5 +441,3 @@ fly --target c set-pipeline \
   ;
 
 fly --target c unpause-pipeline --pipeline install-pcf
-exit
-
