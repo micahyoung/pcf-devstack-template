@@ -35,6 +35,7 @@ source ./state/env.sh
 : ${OPENSTACK_KEYPAIR_NAME:?"!"}
 : ${APPSMAN_COMPANY_NAME:?"!"}
 : ${MYSQL_MONITOR_EMAIL:?"!"}
+PCF_PIPELINES_VERSION=v0.23.0
 OPENSTACK_AUTH_URL=http://$OPENSTACK_HOST/v2.0
 OPENSTACK_API_VERSION=2.0
 OPENSTACK_RESOURCE_PREFIX=devstack
@@ -89,7 +90,7 @@ if ! [ -d bin/pcf-pipelines ]; then
   bin/pivnet \
     download-product-files \
     --product-slug=pcf-automation \
-    --release-version=v0.23.0 \
+    --release-version=$PCF_PIPELINES_VERSION \
     --glob=pcf-pipelines-*.tgz \
     --download-dir=bin/ \
     --accept-eula \
@@ -99,7 +100,13 @@ if ! [ -d bin/pcf-pipelines ]; then
   rm bin/pcf-pipelines-*.tgz
 fi
 
-cat > state/remote-worker-tags-opsfile.yml <<EOF
+cat > state/add-pcf-pipelines-git-version.yml <<EOF
+- op: add
+  path: /resources/name=pcf-pipelines/source/tag_filter
+  value: $PCF_PIPELINES_VERSION
+EOF
+
+cat > state/remove-worker-tags-opsfile.yml <<EOF
 - op: remove
   path: /jobs/name=upload-opsman-image/plan/0/aggregate/get=ops-manager/tags
 - op: remove
@@ -520,7 +527,8 @@ EOF
 
 PATCHED_PIPELINE=$(
   yaml-patch \
-    -o state/remote-worker-tags-opsfile.yml \
+    -o state/add-pcf-pipelines-git-version.yml \
+    -o state/remove-worker-tags-opsfile.yml \
     -o state/bugfix-install-pcf-create-infrastructure-opsfile.yml \
     < bin/pcf-pipelines/install-pcf/openstack/pipeline.yml
 )
