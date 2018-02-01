@@ -10,7 +10,6 @@ fi
 
 source ./state/env.sh
 : ${PIVNET_API_TOKEN:?"!"}
-: ${NET_ID:?"!"}
 : ${OPENSTACK_HOST:?"!"}
 : ${CONCOURSE_URL:?"!"}
 : ${S3_ENDPOINT:?"!"}
@@ -19,9 +18,9 @@ source ./state/env.sh
 : ${S3_OUTPUT_BUCKET:?"!"}
 : ${EXTERNAL_NET_ID:?"!"}
 : ${EXTERNAL_NET_NAME:?"!"}
-: ${EXTERNAL_NET_NAME:?"!"}
 : ${OPENSTACK_KEYPAIR_NAME:?"!"}
 : ${OPENSTACK_KEYPAIR_BASE64:?"!"}
+: ${OPENSTACK_PROJECT_ID:?"!"}
 : ${SYSTEM_DOMAIN:?"!"}
 : ${APPS_DOMAIN:?"!"}
 : ${OPSMAN_PUBKEY:?"!"}
@@ -31,19 +30,23 @@ source ./state/env.sh
 : ${OPSMAN_ADMIN_PASSWORD:?"!"}
 : ${OPSMAN_DECRYPT_PASSWORD:?"!"}
 : ${HAPROXY_IPS:?"!"}
-: ${CONCOURSE_URL:?"!"}
-: ${OPENSTACK_KEYPAIR_NAME:?"!"}
+: ${HAPROXY_FORWARD_TLS:?"!"}
 : ${APPSMAN_COMPANY_NAME:?"!"}
 : ${MYSQL_MONITOR_EMAIL:?"!"}
+: ${SAML_CERT_BASE64:?"!"}
+: ${SAML_KEY_BASE64:?"!"}
+: ${IGNORE_SSL_CERT_VERIFICATION:?"!"}
 PCF_PIPELINES_VERSION=v0.23.0
-OPENSTACK_AUTH_URL=http://$OPENSTACK_HOST/v2.0
-OPENSTACK_API_VERSION=2.0
+#OPENSTACK_AUTH_URL=http://$OPENSTACK_HOST/v2.0
+OPENSTACK_AUTH_URL=http://$OPENSTACK_HOST/v3
+OPENSTACK_API_VERSION=3
 OPENSTACK_RESOURCE_PREFIX=devstack
-OPENSTACK_USERNAME=admin
-OPENSTACK_PASSWORD=password
 OPENSTACK_PROJECT=demo
+OPENSTACK_USERNAME=demo
+OPENSTACK_PASSWORD=password
 OPENSTACK_TENANT=demo
 OPENSTACK_REGION=RegionOne
+OPENSTACK_USER_DOMAIN_NAME=Default
 OPENSTACK_NETWORKING_MODEL=neutron
 INFRA_NETWORK_NAME=${OPENSTACK_RESOURCE_PREFIX}-infra-net
 INFRA_NETWORK_DNS=8.8.8.8
@@ -61,6 +64,15 @@ SECURITY_GROUP=bosh
 SINGLETON_AZ=nova
 AZ1=nova
 NTP_SERVERS=pool.ntp.org
+ERT_MAJOR_MINOR_VERSION='2\.[0-9\]+\.[0-9]+$'
+OPSMAN_MAJOR_MINOR_VERSION='2\.[0-9\]+\.[0-9]+$'
+
+ICMP_CHECKS_ENABLED=false
+MYSQL_STATIC_IPS=172.18.161.20
+ROUTER_STATIC_IPS=172.18.161.21
+SSH_STATIC_IPS=172.18.161.22
+TCP_ROUTER_STATIC_IPS=172.18.161.23
+LOGGREGATOR_ENDPOINT_PORT=443
 
 set -x
 
@@ -73,7 +85,7 @@ if ! [ -f bin/pivnet ]; then
   chmod +x bin/pivnet
 fi
 
-bin/pivnet login --api-token=$PIVNET_API_TOKEN
+#bin/pivnet login --api-token=$PIVNET_API_TOKEN
 
 if ! [ -f bin/yaml-patch ]; then
   #curl -L "https://github.com/krishicks/yaml-patch/releases/download/v0.0.10/yaml_patch_darwin" > bin/yaml-patch
@@ -86,18 +98,25 @@ if ! [ -f bin/fly ]; then
   chmod +x bin/fly
 fi
 
-if ! [ -d bin/pcf-pipelines ]; then
-  bin/pivnet \
-    download-product-files \
-    --product-slug=pcf-automation \
-    --release-version=$PCF_PIPELINES_VERSION \
-    --glob=pcf-pipelines-*.tgz \
-    --download-dir=bin/ \
-    --accept-eula \
-  ;
+#if ! [ -d bin/pcf-pipelines ]; then
+#  bin/pivnet \
+#    download-product-files \
+#    --product-slug=pcf-automation \
+#    --release-version=$PCF_PIPELINES_VERSION \
+#    --glob=pcf-pipelines-*.tgz \
+#    --download-dir=bin/ \
+#    --accept-eula \
+#  ;
+#
+#  tar -xf bin/pcf-pipelines-*.tgz -C bin/
+#  rm bin/pcf-pipelines-*.tgz
+#fi
 
-  tar -xf bin/pcf-pipelines-*.tgz -C bin/
-  rm bin/pcf-pipelines-*.tgz
+if ! [ -d bin/pcf-pipelines ]; then
+  git clone --branch master https://github.com/pivotal-cf/pcf-pipelines bin/pcf-pipelines
+  pushd bin/pcf-pipelines
+    git checkout $PCF_PIPELINES_VERSION
+  popd
 fi
 
 cat > state/add-pcf-pipelines-git-version.yml <<EOF
@@ -167,13 +186,6 @@ cat > state/remove-worker-tags-opsfile.yml <<EOF
   path: /jobs/name=wipe-env/plan/task=wipe-env/tags
 EOF
 
-cat > state/bugfix-install-pcf-create-infrastructure-opsfile.yml <<EOF
-- op: add
-  path: /jobs/name=create-infrastructure/plan/task=create-infrastructure/input_mapping
-  value:
-    ops-manager: pivnet-opsmgr
-EOF
-
 cat > state/install-pcf-params.yml <<EOF
 # Whether to allow SSH access to application instances
 allow_app_ssh_access: false
@@ -220,11 +232,11 @@ container_networking_nw_cidr: 10.255.0.0/16
 credhub_encryption_keys: |
   - name: dummy encryption key 1
     key:
-      secret: CHANGEME_CHANGEME_CHANGEME_CHANGEME
+      secret: foobar
     primary: true
   - name: encryption key 2
     key:
-      secret: CHANGEME_CHANGEME_CHANGEME_CHANGEME
+      secret: bazqux
 
 default_quota_max_number_services: 1000
 
@@ -250,7 +262,7 @@ dynamic_services_reserved_ip_ranges: 10.4.0.0-10.4.0.9
 dynamic_services_subnet_cidr: 10.4.0.0/24
 
 # PCF Elastic Runtime minor version to track
-ert_major_minor_version: ^1\.12\..*$
+ert_major_minor_version: $ERT_MAJOR_MINOR_VERSION
 
 # AZ to use for deployment of ERT Singleton jobs
 ert_singleton_job_az: $SINGLETON_AZ
@@ -277,23 +289,23 @@ garden_network_mtu: 1454
 garden_network_pool_cidr: 10.254.0.0/22
 
 # HAProxy will use the CA provided to verify the certificates provided by the router.
-haproxy_backend_ca: CHANGEME
+haproxy_backend_ca: !!binary $HAPROXY_CA_BASE64
 
 # Floating IPs allocated to HAProxy on OpenStack
 haproxy_floating_ips: $HAPROXY_IPS
 
 # If enabled HAProxy will forward all requests to the router over TLS (enable|disable)
-haproxy_forward_tls: enable
+haproxy_forward_tls: $HAPROXY_FORWARD_TLS
 
 # IaaS configuration for Ops Director
 disable_dhcp: false     # If true, disable DHCP
 ignore_server_az: false # If true, set the volume AZ to the default AZ.
 
 # Network configuration for Ops Director
-icmp_checks_enabled: true    # Enable or disable ICMP checks
+icmp_checks_enabled: $ICMP_CHECKS_ENABLED    # Enable or disable ICMP checks
 
 # Whether to disable SSL cert verification for this environment
-ignore_ssl_cert_verification: false
+ignore_ssl_cert_verification: $IGNORE_SSL_CERT_VERIFICATION
 
 # TODO: Allow multiple DNS servers for each net (currently only 1 can be set)
 # Infra Network
@@ -335,14 +347,14 @@ uaa_instances: 1
 internet_connected: true
 
 # IPs
-ha_proxy_ips:           # Comma-separated list of static IPs
-mysql_static_ips:       # Comma-separated list of static IPs
-router_static_ips:      # Comma-separated list of static IPs
-ssh_static_ips:         # Comma-separated list of static IPs
-tcp_router_static_ips:  # Comma-separated list of static IPs
+ha_proxy_ips:           $HAPROXY_IPS           # Comma-separated list of static IPs
+mysql_static_ips:       $MYSQL_STATIC_IPS      # Comma-separated list of static IPs
+router_static_ips:      $ROUTER_STATIC_IPS     # Comma-separated list of static IPs
+ssh_static_ips:         $SSH_STATIC_IPS        # Comma-separated list of static IPs
+tcp_router_static_ips:  $TCP_ROUTER_STATIC_IPS # Comma-separated list of static IPs
 
 # Loggegrator Port. Default is 443
-loggregator_endpoint_port:
+loggregator_endpoint_port: $LOGGREGATOR_ENDPOINT_PORT
 
 # Max threads count for deploying VMs
 max_threads: 30
@@ -372,29 +384,59 @@ mysql_backups_scp_user:
 # Email address to receive MySQL monitor notifications
 mysql_monitor_email: $MYSQL_MONITOR_EMAIL
 
-networking_poe_ssl_certs:
-# networking_poe_ssl_certs: |
-#  - name: Point of Entry Certificate 1
-#    certificate:
-#      cert_pem: |
-#        -----BEGIN EXAMPLE CERTIFICATE-----
-#        ...
-#        -----END EXAMPLE CERTIFICATE-----
-#      private_key_pem: |
-#        -----BEGIN EXAMPLE CERTIFICATE-----
-#        ...
-#        -----END EXAMPLE CERTIFICATE-----
-#  - name: PoE certificate 2
-#    certificate:
-#      cert_pem: |
-#        -----BEGIN EXAMPLE CERTIFICATE-----
-#        ...
-#        -----END EXAMPLE CERTIFICATE-----
-#      private_key_pem: |
-#        -----BEGIN EXAMPLE RSA PRIVATE KEY-----
-#        ...
-#        -----END EXAMPLE RSA PRIVATE KEY-----
-
+networking_poe_ssl_certs: |
+ - name: Point of Entry Certificate 1
+   certificate:
+     cert_pem: |
+       -----BEGIN CERTIFICATE-----
+       MIIDdDCCAlygAwIBAgIVAIXx6vMQHDSKGTYDxMBMOKNR5hfsMA0GCSqGSIb3DQEB
+       CwUAMB8xCzAJBgNVBAYTAlVTMRAwDgYDVQQKDAdQaXZvdGFsMB4XDTE4MDExNjEz
+       NTExN1oXDTIwMDExNjEzNTExN1owODELMAkGA1UEBhMCVVMxEDAOBgNVBAoMB1Bp
+       dm90YWwxFzAVBgNVBAMMDioucGNmLnlvdW5nLmlvMIIBIjANBgkqhkiG9w0BAQEF
+       AAOCAQ8AMIIBCgKCAQEAy2XWSjI8I+8NkPybm/s20sJ3feb+bl3/siyvBT/fwOQm
+       GFWBLR7eK1rK45bayG9HOyd6dw9a4Y0FCnZjyGpJ0vGNUmF84FCMJaFbr9Kbz2UX
+       dgdi6uOiMJJFE3JZHx7uPLlGKVH3ZwYeymSqT19SeduPJrWOXWe8ldWiiaNoPGvz
+       VHTsRp9rGTJPdmXl9UWIcZjj8RcPnR6RoarwFt0fm8h+MOrmJi8Ljv2x53oh39Fg
+       3szhjWctYiv50CL614PbUiTkx/H9lcdTIIFdbAOBzOwtsKeF4VTDd7pCeKozaQ4G
+       diUzMCSpyUJ+knCjcYV97mgAD3pjmrBZk1RNeCMYXwIDAQABo4GNMIGKMA4GA1Ud
+       DwEB/wQEAwIHgDAdBgNVHQ4EFgQULb08ze+CGiVNOs37dAEd2m3oVAkwHQYDVR0l
+       BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMBMB8GA1UdIwQYMBaAFEKpP+q/yBOjmUbm
+       YAbm57SBLveAMBkGA1UdEQQSMBCCDioucGNmLnlvdW5nLmlvMA0GCSqGSIb3DQEB
+       CwUAA4IBAQCRWH7TFEPvYN92WXnHb3jFRxdaXRlTJpn+/qn0l/9HS3a5PKviRPN6
+       xcCRy/AJpJhrUR9hUgAWjpR7prIN/XF9RqkiQq0bSv35K4WX2cnjvABN4TlbRQ1E
+       YJucR+kbum9qvbdvYa7PISPYhO8wqSbo/X3CdH5u7bm3r02gzc8PpCiH6wYsT8oK
+       7GUmITWCl5aok0wtng4DtlEchCtfOOsivpJTAvCkX9k7QlrGf2fBWcdBGeRY0IDN
+       GM8caJLaGGRt8kaTP9iTXoDSWk64vmAXM+RvKKQPdknQ8IQWs7GrMmStQRs1LK7W
+       DpRDoa/9rzMKILzdbehgrvutk0Xh6AD5
+       -----END CERTIFICATE-----
+     private_key_pem: |
+       -----BEGIN RSA PRIVATE KEY-----
+       MIIEpAIBAAKCAQEAy2XWSjI8I+8NkPybm/s20sJ3feb+bl3/siyvBT/fwOQmGFWB
+       LR7eK1rK45bayG9HOyd6dw9a4Y0FCnZjyGpJ0vGNUmF84FCMJaFbr9Kbz2UXdgdi
+       6uOiMJJFE3JZHx7uPLlGKVH3ZwYeymSqT19SeduPJrWOXWe8ldWiiaNoPGvzVHTs
+       Rp9rGTJPdmXl9UWIcZjj8RcPnR6RoarwFt0fm8h+MOrmJi8Ljv2x53oh39Fg3szh
+       jWctYiv50CL614PbUiTkx/H9lcdTIIFdbAOBzOwtsKeF4VTDd7pCeKozaQ4GdiUz
+       MCSpyUJ+knCjcYV97mgAD3pjmrBZk1RNeCMYXwIDAQABAoIBAF5Z6jLW5MEChneI
+       RqLvwLm5zfZQbhxCbHd5dOLpg2EWNHm7SEXm+MaBwnYap3is7g0Jvix2qgDRCtKU
+       oqr4azB4LsdVQ7lGhAx8smx4NSDa0yxENuWhHL6NS4++zoq6LWdrxpkqVaqr0yKt
+       2bciD79JUzlwpQ69LWUQCerxK0xDL4Vx/S2eHF+CjXLsloSbbNWJWHMQKiThxBT5
+       1Gg1mDU4O9LqmbwRC5pJwxsNrZbcTax+5AlsTHCnvKx37bN9ltgdzc5+SJgITttD
+       zIDFVCiORQ8sIoCyM5FfiYDHlSEF+yjlWy2Ckrwsky40qAqGJkDYZrIf7SUxYAZP
+       NhXqNUECgYEA6Xxp54zDkBhfeurEcN68ot7yuhGP6XMnUg8pbTF+FYU6+YatzbBJ
+       dqeaXu9IdWEqn69Nz8nbb4wsUf0mfyjPuUnLHhXPYjldwidwVERZ5nchKwCd4q8O
+       RVhUr/rSWFebD21c/N44IjrADIXddXOWy7Kj+jowk/wo81nZL4KRUWECgYEA3wKy
+       yesrHs1UxYb09D126AG8A/45kzzjV4gU7BReGedkitg2Z2qhtF6W4720hNHma2vv
+       maOLSbjlHEpJZ85N6zLyKL6ubuE5xVqOiFRAf87/gByDL4nYcp+aKTiFy8mrYfQ0
+       rfjRQKfnbKljUoLlFOIFHobgkwW4m8ZgF2gmAb8CgYEAs9bnf7lVnHSZfoS7wDBf
+       3ZeaICWM0oSm4bbZ8sgvVIYlUbMhxg+l1iXsankmN3sbKJoPdiAFzBqMvK4fa8xU
+       i2RCdi7YaNDE3dog1Fc9Y52Yx5WXBtZNSK5rtIyeXftEbRKQkBjd5ceYy0yEsoXQ
+       vZ8gXIlbh3CvXhlzhvur0KECgYEAhobsL14LnwMiNh3ZOlSxm/cf4hDDzowWYEEY
+       zejjcyDgx9jxyKTMcy/0OeHAObcdFoP//2Bmr8w3eT9e1J3g5xbOecG9G+oFnYWp
+       IZghaHgILNIGWPEAfvTEXEVagLphBi/4b1H/eM9QjX4JCkcnxdcqW2Xlpwr2eBHM
+       +ZG8C6UCgYBHj3QW0d/SlHRlBP+pbF22rj7M3oNEjkLFXtYun1k7yG4qX0q2YZpB
+       ZAOoLmOQ/UxPiOeNAhXb3UsbKwtdPvy77F5OTPUMTf+AwET1kB6vsdXf9ZxXFoxN
+       WFQXMTAJz3dpgKcoFMsOZEOVWAkXi5kpOoLQnBAV3X3T766KNEf64w==
+       -----END RSA PRIVATE KEY-----
 # Comma-separated list of NTP servers to use for VMs deployed by BOSH
 ntp_servers: $NTP_SERVERS
 
@@ -413,7 +455,7 @@ opsman_flavor: m1.xlarge                  # Ops man VM flavor
 opsman_image: ops-manager                 # Prefix for the ops man glance image
 
 # PCF Ops Manager minor version to track
-opsman_major_minor_version: ^1\.12\..*$
+opsman_major_minor_version: $OPSMAN_MAJOR_MINOR_VERSION
 
 # The public key of your opsman key
 opsman_public_key: $OPSMAN_PUBKEY
@@ -429,24 +471,24 @@ os_identity_api_version: $OPENSTACK_API_VERSION
 os_interface: public
 os_networking_model: $OPENSTACK_NETWORKING_MODEL
 os_password: $OPENSTACK_PASSWORD
-os_project_id:
+os_project_id: $OPENSTACK_PROJECT_ID
 os_project_name: $OPENSTACK_PROJECT
 os_region_name: $OPENSTACK_REGION
 os_tenant: $OPENSTACK_TENANT
-os_user_domain_name:
+os_user_domain_name: $OPENSTACK_USER_DOMAIN_NAME
 os_username: $OPENSTACK_USERNAME
 pre_os_cacert: # Set if needed (see above)
 
 os_keypair_name: $OPENSTACK_KEYPAIR_NAME # Keypair to use for bosh VMs
-os_private_key: !!binary $OPENSTACK_KEYPAIR_BASE64 # Private key for keypair
+os_private_key: !!binary $OPENSTACK_KEYPAIR_BASE64
 
 # The following should be set to a unique prefix. It will be used to prefix all
 # the terraform resources created by the pipeline
 os_resource_prefix: $OPENSTACK_RESOURCE_PREFIX
 
 ## Wildcard domain certs go here
-pcf_ert_saml_cert:
-pcf_ert_saml_key:
+pcf_ert_saml_cert: !!binary $SAML_CERT_BASE64
+pcf_ert_saml_key: !!binary $SAML_KEY_BASE64
 
 # Pivnet token for downloading resources from Pivnet. Find this token at https://network.pivotal.io/users/dashboard/edit-profile
 pivnet_token: $PIVNET_API_TOKEN
@@ -529,7 +571,6 @@ PATCHED_PIPELINE=$(
   yaml-patch \
     -o state/add-pcf-pipelines-git-version.yml \
     -o state/remove-worker-tags-opsfile.yml \
-    -o state/bugfix-install-pcf-create-infrastructure-opsfile.yml \
     < bin/pcf-pipelines/install-pcf/openstack/pipeline.yml
 )
 
