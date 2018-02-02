@@ -16,11 +16,9 @@ source ./state/env.sh
 : ${S3_ACCESS_KEY:?"!"}
 : ${S3_SECRET_KEY:?"!"}
 : ${S3_OUTPUT_BUCKET:?"!"}
-: ${EXTERNAL_NET_ID:?"!"}
 : ${EXTERNAL_NET_NAME:?"!"}
 : ${OPENSTACK_KEYPAIR_NAME:?"!"}
 : ${OPENSTACK_KEYPAIR_BASE64:?"!"}
-: ${OPENSTACK_PROJECT_ID:?"!"}
 : ${SYSTEM_DOMAIN:?"!"}
 : ${APPS_DOMAIN:?"!"}
 : ${OPSMAN_PUBKEY:?"!"}
@@ -67,7 +65,14 @@ AZ1=nova
 NTP_SERVERS=pool.ntp.org
 ICMP_CHECKS_ENABLED=false
 
+export OS_PROJECT_NAME=$OPENSTACK_PROJECT
+export OS_USERNAME=$OPENSTACK_USERNAME
+export OS_PASSWORD=$OPENSTACK_PASSWORD
+export OS_AUTH_URL=http://$OPENSTACK_HOST/v2.0
 set -x
+
+OPENSTACK_PROJECT_ID=$(openstack project show $OPENSTACK_PROJECT -c id -f value)
+EXTERNAL_NET_ID=$(openstack network show $EXTERNAL_NET_NAME -c id -f value)
 
 mkdir -p bin
 PATH=$PATH:$(pwd)/bin
