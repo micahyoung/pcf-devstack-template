@@ -85,7 +85,7 @@ if ! [ -f bin/pivnet ]; then
   chmod +x bin/pivnet
 fi
 
-#bin/pivnet login --api-token=$PIVNET_API_TOKEN
+bin/pivnet login --api-token=$PIVNET_API_TOKEN
 
 if ! [ -f bin/yaml-patch ]; then
   #curl -L "https://github.com/krishicks/yaml-patch/releases/download/v0.0.10/yaml_patch_darwin" > bin/yaml-patch
@@ -98,25 +98,18 @@ if ! [ -f bin/fly ]; then
   chmod +x bin/fly
 fi
 
-#if ! [ -d bin/pcf-pipelines ]; then
-#  bin/pivnet \
-#    download-product-files \
-#    --product-slug=pcf-automation \
-#    --release-version=$PCF_PIPELINES_VERSION \
-#    --glob=pcf-pipelines-*.tgz \
-#    --download-dir=bin/ \
-#    --accept-eula \
-#  ;
-#
-#  tar -xf bin/pcf-pipelines-*.tgz -C bin/
-#  rm bin/pcf-pipelines-*.tgz
-#fi
-
 if ! [ -d bin/pcf-pipelines ]; then
-  git clone --branch master https://github.com/pivotal-cf/pcf-pipelines bin/pcf-pipelines
-  pushd bin/pcf-pipelines
-    git checkout $PCF_PIPELINES_VERSION
-  popd
+  bin/pivnet \
+    download-product-files \
+    --product-slug=pcf-automation \
+    --release-version=$PCF_PIPELINES_VERSION \
+    --glob=pcf-pipelines-*.tgz \
+    --download-dir=bin/ \
+    --accept-eula \
+  ;
+
+  tar -xf bin/pcf-pipelines-*.tgz -C bin/
+  rm bin/pcf-pipelines-*.tgz
 fi
 
 cat > state/add-pcf-pipelines-git-version.yml <<EOF
