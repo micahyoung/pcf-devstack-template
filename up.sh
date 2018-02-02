@@ -36,8 +36,9 @@ source ./state/env.sh
 : ${SAML_CERT_BASE64:?"!"}
 : ${SAML_KEY_BASE64:?"!"}
 : ${IGNORE_SSL_CERT_VERIFICATION:?"!"}
+ERT_MAJOR_MINOR_VERSION='2\.[0-9\]+\.[0-9]+$'
+OPSMAN_MAJOR_MINOR_VERSION='2\.[0-9\]+\.[0-9]+$'
 PCF_PIPELINES_VERSION=v0.23.0
-#OPENSTACK_AUTH_URL=http://$OPENSTACK_HOST/v2.0
 OPENSTACK_AUTH_URL=http://$OPENSTACK_HOST/v3
 OPENSTACK_API_VERSION=3
 OPENSTACK_RESOURCE_PREFIX=devstack
@@ -64,15 +65,7 @@ SECURITY_GROUP=bosh
 SINGLETON_AZ=nova
 AZ1=nova
 NTP_SERVERS=pool.ntp.org
-ERT_MAJOR_MINOR_VERSION='2\.[0-9\]+\.[0-9]+$'
-OPSMAN_MAJOR_MINOR_VERSION='2\.[0-9\]+\.[0-9]+$'
-
 ICMP_CHECKS_ENABLED=false
-MYSQL_STATIC_IPS=172.18.161.20
-ROUTER_STATIC_IPS=172.18.161.21
-SSH_STATIC_IPS=172.18.161.22
-TCP_ROUTER_STATIC_IPS=172.18.161.23
-LOGGREGATOR_ENDPOINT_PORT=443
 
 set -x
 
@@ -347,7 +340,7 @@ ssh_static_ips:
 tcp_router_static_ips:
 
 # Loggegrator Port. Default is 443
-loggregator_endpoint_port: $LOGGREGATOR_ENDPOINT_PORT
+loggregator_endpoint_port:
 
 # Max threads count for deploying VMs
 max_threads: 30
