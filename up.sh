@@ -347,11 +347,11 @@ uaa_instances: 1
 internet_connected: true
 
 # IPs
-ha_proxy_ips:           $HAPROXY_IPS           # Comma-separated list of static IPs
-mysql_static_ips:       $MYSQL_STATIC_IPS      # Comma-separated list of static IPs
-router_static_ips:      $ROUTER_STATIC_IPS     # Comma-separated list of static IPs
-ssh_static_ips:         $SSH_STATIC_IPS        # Comma-separated list of static IPs
-tcp_router_static_ips:  $TCP_ROUTER_STATIC_IPS # Comma-separated list of static IPs
+ha_proxy_ips:
+mysql_static_ips:
+router_static_ips:
+ssh_static_ips:
+tcp_router_static_ips:
 
 # Loggegrator Port. Default is 443
 loggregator_endpoint_port: $LOGGREGATOR_ENDPOINT_PORT
