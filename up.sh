@@ -558,6 +558,16 @@ tcp_routing: disable
 tcp_routing_ports:
 EOF
 
+if ! [ "25:25:20:122880:20" = "$(openstack quota show $OPENSTACK_PROJECT -f value -c cores -c instances -c networks -c ram -c volumes | paste -s -d:)" ]; then
+  openstack quota set $OPENSTACK_PROJECT \
+   --cores 25     \
+   --instances 25 \
+   --networks 20  \
+   --ram 122880   \
+   --volumes 20   \
+  ;
+fi
+
 PATCHED_PIPELINE=$(
   yaml-patch \
     -o state/add-pcf-pipelines-git-version.yml \
