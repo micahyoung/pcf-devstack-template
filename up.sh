@@ -64,6 +64,9 @@ SINGLETON_AZ=nova
 AZ1=nova
 NTP_SERVERS=pool.ntp.org
 ICMP_CHECKS_ENABLED=false
+DIEGO_CELL_INSTANCES=1
+SYSLOG_ADAPTER_INSTANCES=1
+SYSLOG_SCHEDULER_INSTANCES=1
 
 export OS_PROJECT_NAME=$OPENSTACK_PROJECT
 export OS_USERNAME=$OPENSTACK_USERNAME
@@ -318,7 +321,7 @@ cloud_controller_worker_instances: 1
 consul_server_instances: 1
 credhub_instances: 0
 diego_brain_instances: 1
-diego_cell_instances: 3
+diego_cell_instances: $DIEGO_CELL_INSTANCES
 diego_database_instances: 1
 doppler_instances: 1
 ha_proxy_instances: 1
@@ -329,8 +332,8 @@ mysql_proxy_instances: 1
 nats_instances: 1
 nfs_server_instances: 1
 router_instances: 1
-syslog_adapter_instances: 3
-syslog_scheduler_instances: 2
+syslog_adapter_instances: $SYSLOG_ADAPTER_INSTANCES
+syslog_scheduler_instances: $SYSLOG_SCHEDULER_INSTANCES
 tcp_router_instances: 1
 uaa_instances: 1
 
@@ -558,10 +561,10 @@ tcp_routing: disable
 tcp_routing_ports:
 EOF
 
-if ! [ "25:25:20:122880:20" = "$(openstack quota show $OPENSTACK_PROJECT -f value -c cores -c instances -c networks -c ram -c volumes | paste -s -d:)" ]; then
+if ! [ "72:30:20:122880:20" = "$(openstack quota show $OPENSTACK_PROJECT -f value -c cores -c instances -c networks -c ram -c volumes | paste -s -d:)" ]; then
   openstack quota set $OPENSTACK_PROJECT \
-   --cores 25     \
-   --instances 25 \
+   --cores 72     \
+   --instances 30 \
    --networks 20  \
    --ram 122880   \
    --volumes 20   \
