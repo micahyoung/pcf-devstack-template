@@ -34,6 +34,7 @@ source ./state/env.sh
 : ${SAML_CERT_BASE64:?"!"}
 : ${SAML_KEY_BASE64:?"!"}
 : ${IGNORE_SSL_CERT_VERIFICATION:?"!"}
+: ${SKIP_CERT_VERIFY:?"!"}
 ERT_MAJOR_MINOR_VERSION='2\.[0-9\]+\.[0-9]+$'
 OPSMAN_MAJOR_MINOR_VERSION='2\.[0-9\]+\.[0-9]+$'
 PCF_PIPELINES_VERSION=v0.23.0
@@ -504,7 +505,7 @@ services_reserved_ip_ranges: 10.3.0.0-10.3.0.9
 services_subnet_cidr: 10.3.0.0/24
 
 # If true, disable SSL certificate verification for this environment.
-skip_cert_verify: false
+skip_cert_verify: $SKIP_CERT_VERIFY
 
 # If smtp_address is configured, smtp_from, smtp_port, smtp_user, smtp_pwd,
 # smtp_enable_starttls_auto, and smtp_auth_mechanism must also be set.
