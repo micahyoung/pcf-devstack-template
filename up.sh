@@ -341,11 +341,11 @@ uaa_instances: 1
 internet_connected: true
 
 # IPs
-ha_proxy_ips:
-mysql_static_ips:
-router_static_ips:
-ssh_static_ips:
-tcp_router_static_ips:
+ha_proxy_ips:           # Comma-separated list of static IPs
+mysql_static_ips:       # Comma-separated list of static IPs
+router_static_ips:      # Comma-separated list of static IPs
+ssh_static_ips:         # Comma-separated list of static IPs
+tcp_router_static_ips:  # Comma-separated list of static IPs
 
 # Loggegrator Port. Default is 443
 loggregator_endpoint_port:
@@ -378,59 +378,29 @@ mysql_backups_scp_user:
 # Email address to receive MySQL monitor notifications
 mysql_monitor_email: $MYSQL_MONITOR_EMAIL
 
-networking_poe_ssl_certs: |
- - name: Point of Entry Certificate 1
-   certificate:
-     cert_pem: |
-       -----BEGIN CERTIFICATE-----
-       MIIDdDCCAlygAwIBAgIVAIXx6vMQHDSKGTYDxMBMOKNR5hfsMA0GCSqGSIb3DQEB
-       CwUAMB8xCzAJBgNVBAYTAlVTMRAwDgYDVQQKDAdQaXZvdGFsMB4XDTE4MDExNjEz
-       NTExN1oXDTIwMDExNjEzNTExN1owODELMAkGA1UEBhMCVVMxEDAOBgNVBAoMB1Bp
-       dm90YWwxFzAVBgNVBAMMDioucGNmLnlvdW5nLmlvMIIBIjANBgkqhkiG9w0BAQEF
-       AAOCAQ8AMIIBCgKCAQEAy2XWSjI8I+8NkPybm/s20sJ3feb+bl3/siyvBT/fwOQm
-       GFWBLR7eK1rK45bayG9HOyd6dw9a4Y0FCnZjyGpJ0vGNUmF84FCMJaFbr9Kbz2UX
-       dgdi6uOiMJJFE3JZHx7uPLlGKVH3ZwYeymSqT19SeduPJrWOXWe8ldWiiaNoPGvz
-       VHTsRp9rGTJPdmXl9UWIcZjj8RcPnR6RoarwFt0fm8h+MOrmJi8Ljv2x53oh39Fg
-       3szhjWctYiv50CL614PbUiTkx/H9lcdTIIFdbAOBzOwtsKeF4VTDd7pCeKozaQ4G
-       diUzMCSpyUJ+knCjcYV97mgAD3pjmrBZk1RNeCMYXwIDAQABo4GNMIGKMA4GA1Ud
-       DwEB/wQEAwIHgDAdBgNVHQ4EFgQULb08ze+CGiVNOs37dAEd2m3oVAkwHQYDVR0l
-       BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMBMB8GA1UdIwQYMBaAFEKpP+q/yBOjmUbm
-       YAbm57SBLveAMBkGA1UdEQQSMBCCDioucGNmLnlvdW5nLmlvMA0GCSqGSIb3DQEB
-       CwUAA4IBAQCRWH7TFEPvYN92WXnHb3jFRxdaXRlTJpn+/qn0l/9HS3a5PKviRPN6
-       xcCRy/AJpJhrUR9hUgAWjpR7prIN/XF9RqkiQq0bSv35K4WX2cnjvABN4TlbRQ1E
-       YJucR+kbum9qvbdvYa7PISPYhO8wqSbo/X3CdH5u7bm3r02gzc8PpCiH6wYsT8oK
-       7GUmITWCl5aok0wtng4DtlEchCtfOOsivpJTAvCkX9k7QlrGf2fBWcdBGeRY0IDN
-       GM8caJLaGGRt8kaTP9iTXoDSWk64vmAXM+RvKKQPdknQ8IQWs7GrMmStQRs1LK7W
-       DpRDoa/9rzMKILzdbehgrvutk0Xh6AD5
-       -----END CERTIFICATE-----
-     private_key_pem: |
-       -----BEGIN RSA PRIVATE KEY-----
-       MIIEpAIBAAKCAQEAy2XWSjI8I+8NkPybm/s20sJ3feb+bl3/siyvBT/fwOQmGFWB
-       LR7eK1rK45bayG9HOyd6dw9a4Y0FCnZjyGpJ0vGNUmF84FCMJaFbr9Kbz2UXdgdi
-       6uOiMJJFE3JZHx7uPLlGKVH3ZwYeymSqT19SeduPJrWOXWe8ldWiiaNoPGvzVHTs
-       Rp9rGTJPdmXl9UWIcZjj8RcPnR6RoarwFt0fm8h+MOrmJi8Ljv2x53oh39Fg3szh
-       jWctYiv50CL614PbUiTkx/H9lcdTIIFdbAOBzOwtsKeF4VTDd7pCeKozaQ4GdiUz
-       MCSpyUJ+knCjcYV97mgAD3pjmrBZk1RNeCMYXwIDAQABAoIBAF5Z6jLW5MEChneI
-       RqLvwLm5zfZQbhxCbHd5dOLpg2EWNHm7SEXm+MaBwnYap3is7g0Jvix2qgDRCtKU
-       oqr4azB4LsdVQ7lGhAx8smx4NSDa0yxENuWhHL6NS4++zoq6LWdrxpkqVaqr0yKt
-       2bciD79JUzlwpQ69LWUQCerxK0xDL4Vx/S2eHF+CjXLsloSbbNWJWHMQKiThxBT5
-       1Gg1mDU4O9LqmbwRC5pJwxsNrZbcTax+5AlsTHCnvKx37bN9ltgdzc5+SJgITttD
-       zIDFVCiORQ8sIoCyM5FfiYDHlSEF+yjlWy2Ckrwsky40qAqGJkDYZrIf7SUxYAZP
-       NhXqNUECgYEA6Xxp54zDkBhfeurEcN68ot7yuhGP6XMnUg8pbTF+FYU6+YatzbBJ
-       dqeaXu9IdWEqn69Nz8nbb4wsUf0mfyjPuUnLHhXPYjldwidwVERZ5nchKwCd4q8O
-       RVhUr/rSWFebD21c/N44IjrADIXddXOWy7Kj+jowk/wo81nZL4KRUWECgYEA3wKy
-       yesrHs1UxYb09D126AG8A/45kzzjV4gU7BReGedkitg2Z2qhtF6W4720hNHma2vv
-       maOLSbjlHEpJZ85N6zLyKL6ubuE5xVqOiFRAf87/gByDL4nYcp+aKTiFy8mrYfQ0
-       rfjRQKfnbKljUoLlFOIFHobgkwW4m8ZgF2gmAb8CgYEAs9bnf7lVnHSZfoS7wDBf
-       3ZeaICWM0oSm4bbZ8sgvVIYlUbMhxg+l1iXsankmN3sbKJoPdiAFzBqMvK4fa8xU
-       i2RCdi7YaNDE3dog1Fc9Y52Yx5WXBtZNSK5rtIyeXftEbRKQkBjd5ceYy0yEsoXQ
-       vZ8gXIlbh3CvXhlzhvur0KECgYEAhobsL14LnwMiNh3ZOlSxm/cf4hDDzowWYEEY
-       zejjcyDgx9jxyKTMcy/0OeHAObcdFoP//2Bmr8w3eT9e1J3g5xbOecG9G+oFnYWp
-       IZghaHgILNIGWPEAfvTEXEVagLphBi/4b1H/eM9QjX4JCkcnxdcqW2Xlpwr2eBHM
-       +ZG8C6UCgYBHj3QW0d/SlHRlBP+pbF22rj7M3oNEjkLFXtYun1k7yG4qX0q2YZpB
-       ZAOoLmOQ/UxPiOeNAhXb3UsbKwtdPvy77F5OTPUMTf+AwET1kB6vsdXf9ZxXFoxN
-       WFQXMTAJz3dpgKcoFMsOZEOVWAkXi5kpOoLQnBAV3X3T766KNEf64w==
-       -----END RSA PRIVATE KEY-----
+networking_poe_ssl_certs:
+# networking_poe_ssl_certs: |
+#  - name: Point of Entry Certificate 1
+#    certificate:
+#      cert_pem: |
+#        -----BEGIN EXAMPLE CERTIFICATE-----
+#        ...
+#        -----END EXAMPLE CERTIFICATE-----
+#      private_key_pem: |
+#        -----BEGIN EXAMPLE CERTIFICATE-----
+#        ...
+#        -----END EXAMPLE CERTIFICATE-----
+#  - name: PoE certificate 2
+#    certificate:
+#      cert_pem: |
+#        -----BEGIN EXAMPLE CERTIFICATE-----
+#        ...
+#        -----END EXAMPLE CERTIFICATE-----
+#      private_key_pem: |
+#        -----BEGIN EXAMPLE RSA PRIVATE KEY-----
+#        ...
+#        -----END EXAMPLE RSA PRIVATE KEY-----
+
 # Comma-separated list of NTP servers to use for VMs deployed by BOSH
 ntp_servers: $NTP_SERVERS
 
