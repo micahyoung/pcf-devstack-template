@@ -67,6 +67,7 @@ ICMP_CHECKS_ENABLED=false
 DIEGO_CELL_INSTANCES=1
 SYSLOG_ADAPTER_INSTANCES=1
 SYSLOG_SCHEDULER_INSTANCES=1
+MYSQL_MONITOR_INSTANCES=0
 
 export OS_PROJECT_NAME=$OPENSTACK_PROJECT
 export OS_USERNAME=$OPENSTACK_USERNAME
@@ -327,7 +328,7 @@ doppler_instances: 1
 ha_proxy_instances: 1
 loggregator_trafficcontroller_instances: 1
 mysql_instances: 1
-mysql_monitor_instances: 1
+mysql_monitor_instances: $MYSQL_MONITOR_INSTANCES
 mysql_proxy_instances: 1
 nats_instances: 1
 nfs_server_instances: 1
