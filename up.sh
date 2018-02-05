@@ -77,8 +77,6 @@ export OS_PASSWORD=$OPENSTACK_PASSWORD
 export OS_AUTH_URL=http://$OPENSTACK_HOST/v2.0
 set -x
 
-# TODO: use fqdn directly instead (fails when changing after deployment)
-OPSMAN_IP=$(dig +short $OPSMAN_FQDN)
 HAPROXY_IP=$(dig +short $HAPROXY_FQDN)
 OPENSTACK_PROJECT_ID=$(openstack project show $OPENSTACK_PROJECT -c id -f value)
 EXTERNAL_NET_ID=$(openstack network show $EXTERNAL_NET_NAME -c id -f value)
