@@ -29,6 +29,7 @@ source ./state/env.sh
 : ${OPSMAN_DECRYPT_PASSWORD:?"!"}
 : ${HAPROXY_FQDN:?"!"}
 : ${HAPROXY_FORWARD_TLS:?"!"}
+: ${HAPROXY_CA_BASE64:?"!"}
 : ${APPSMAN_COMPANY_NAME:?"!"}
 : ${MYSQL_MONITOR_EMAIL:?"!"}
 : ${SAML_CERT_BASE64:?"!"}
