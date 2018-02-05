@@ -27,7 +27,7 @@ source ./state/env.sh
 : ${OPSMAN_ADMIN_USERNAME:?"!"}
 : ${OPSMAN_ADMIN_PASSWORD:?"!"}
 : ${OPSMAN_DECRYPT_PASSWORD:?"!"}
-: ${HAPROXY_IPS:?"!"}
+: ${HAPROXY_FQDN:?"!"}
 : ${HAPROXY_FORWARD_TLS:?"!"}
 : ${APPSMAN_COMPANY_NAME:?"!"}
 : ${MYSQL_MONITOR_EMAIL:?"!"}
@@ -76,6 +76,9 @@ export OS_PASSWORD=$OPENSTACK_PASSWORD
 export OS_AUTH_URL=http://$OPENSTACK_HOST/v2.0
 set -x
 
+# TODO: use fqdn directly instead (fails when changing after deployment)
+OPSMAN_IP=$(dig +short $OPSMAN_FQDN)
+HAPROXY_IP=$(dig +short $HAPROXY_FQDN)
 OPENSTACK_PROJECT_ID=$(openstack project show $OPENSTACK_PROJECT -c id -f value)
 EXTERNAL_NET_ID=$(openstack network show $EXTERNAL_NET_NAME -c id -f value)
 
@@ -288,7 +291,7 @@ garden_network_pool_cidr: 10.254.0.0/22
 haproxy_backend_ca: !!binary $HAPROXY_CA_BASE64
 
 # Floating IPs allocated to HAProxy on OpenStack
-haproxy_floating_ips: $HAPROXY_IPS
+haproxy_floating_ips: $HAPROXY_IP
 
 # If enabled HAProxy will forward all requests to the router over TLS (enable|disable)
 haproxy_forward_tls: $HAPROXY_FORWARD_TLS
@@ -416,7 +419,7 @@ opsman_client_id:                         # Client ID for Ops Manager admin acco
 opsman_client_secret:                     # Client Secret for Ops Manager admin account
 
 # Ops Manager VM Settings
-opsman_domain_or_ip_address: $OPSMAN_FQDN # FQDN to access Ops Manager without protocol (will use https), ex: opsmgr.example.com
+opsman_domain_or_ip_address: $OPSMAN_IP # FQDN to access Ops Manager without protocol (will use https), ex: opsmgr.example.com
 opsman_flavor: m1.xlarge                  # Ops man VM flavor
 opsman_image: ops-manager                 # Prefix for the ops man glance image
 
