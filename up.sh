@@ -138,6 +138,7 @@ cat > state/add-route53-domain-push.yml <<EOF
     - aggregate:
       - get: terraform-state
         passed: [create-infrastructure]
+        trigger: true
     - task: set-fqdn-ips
       config:
         platform: linux
