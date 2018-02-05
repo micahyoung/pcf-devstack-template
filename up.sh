@@ -155,6 +155,8 @@ cat > state/add-route53-domain-push.yml <<EOF
           args:
           - '-c'
           - "jq '.modules[0].outputs' terraform-state/terraform.tfstate"
+          - "&&"
+          - "aws route53 list-hosted-zones-by-name"
 EOF
 
 cat > state/remove-worker-tags-opsfile.yml <<EOF
