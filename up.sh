@@ -149,14 +149,73 @@ cat > state/add-route53-domain-push.yml <<EOF
         inputs:
         - name: terraform-state
         params:
-          OS_PROJECT_NAME:
+          AWS_ACCESS_KEY_ID: $S3_ACCESS_KEY
+          AWS_SECRET_ACCESS_KEY: $S3_SECRET_KEY
+          DOMAIN: $SYSTEM_DOMAIN
+          OPSMAN_FQDN: $OPSMAN_FQDN
+          HAPROXY_FQDN: $HAPROXY_FQDN
         run:
           path: /bin/bash
           args:
-          - '-c'
-          - "jq '.modules[0].outputs' terraform-state/terraform.tfstate"
-          - "&&"
-          - "aws route53 list-hosted-zones-by-name"
+          - -c
+          - |
+            #!/bin/bash
+
+            HAPROXY_IP=\$(jq -r '.modules[0].outputs.haproxy_floating_ip.value' terraform-state/terraform.tfstate)
+            OPSMAN_IP=\$(jq -r '.modules[0].outputs.opsman_floating_ip.value' terraform-state/terraform.tfstate)
+            echo HA_PROXY_IP: \$HAPROXY_IP
+            echo OPSMAN_IP: \$OPSMAN_IP
+
+            ZONES_JSON=\$(aws route53 list-hosted-zones-by-name --dns-name \$DOMAIN)
+            HOSTED_ZONE=\$(jq -r '.HostedZones[0].Id' <(echo \$ZONES_JSON))
+
+            read -r -d '' BATCH_JSON << EOJ
+            {
+              "Changes": [
+                 {
+                   "Action": "UPSERT",
+                   "ResourceRecordSet": {
+                     "Name": "\$HAPROXY_FQDN",
+                     "ResourceRecords": [
+                         {
+                             "Value": "\$HAPROXY_IP"
+                         }
+                     ],
+                     "Type": "A",
+                     "TTL": 60
+                   }
+                 },
+                 {
+                   "Action": "UPSERT",
+                   "ResourceRecordSet": {
+                     "Name": "\$OPSMAN_FQDN",
+                     "ResourceRecords": [
+                         {
+                             "Value": "\$OPSMAN_IP"
+                         }
+                     ],
+                     "Type": "A",
+                     "TTL": 60
+                   }
+                 }
+              ]
+            }
+            EOJ
+
+            jq '.' <(echo  \$BATCH_JSON)
+
+            aws route53 change-resource-record-sets --hosted-zone-id=\$HOSTED_ZONE --change-batch=file://<(echo \$BATCH_JSON)
+
+            while sleep 1; do
+              if [ "\$OPSMAN_IP" = "\$(dig +short \$OPSMAN_FQDN)" ] && \
+                 [ "\$HAPROXY_IP" = "\$(dig +short \$HAPROXY_FQDN)" ]; then
+                exit
+              fi
+
+              echo waiting for DNS to update
+              echo \$(dig +short \$OPSMAN_FQDN) != \$OPSMAN_IP 
+              echo \$(dig +short \$HAPROXY_FQDN) != \$HAPROXY_IP 
+            done
 EOF
 
 cat > state/remove-worker-tags-opsfile.yml <<EOF
@@ -454,7 +513,7 @@ opsman_client_id:                         # Client ID for Ops Manager admin acco
 opsman_client_secret:                     # Client Secret for Ops Manager admin account
 
 # Ops Manager VM Settings
-opsman_domain_or_ip_address: $OPSMAN_IP # FQDN to access Ops Manager without protocol (will use https), ex: opsmgr.example.com
+opsman_domain_or_ip_address: $OPSMAN_FQDN # FQDN to access Ops Manager without protocol (will use https), ex: opsmgr.example.com
 opsman_flavor: m1.xlarge                  # Ops man VM flavor
 opsman_image: ops-manager                 # Prefix for the ops man glance image
 
