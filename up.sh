@@ -92,7 +92,7 @@ if ! [ -f bin/pivnet ]; then
   chmod +x bin/pivnet
 fi
 
-bin/pivnet login --api-token=$PIVNET_API_TOKEN
+#bin/pivnet login --api-token=$PIVNET_API_TOKEN
 
 if ! [ -f bin/yaml-patch ]; then
   #curl -L "https://github.com/krishicks/yaml-patch/releases/download/v0.0.10/yaml_patch_darwin" > bin/yaml-patch
@@ -123,6 +123,30 @@ cat > state/add-pcf-pipelines-git-version.yml <<EOF
 - op: add
   path: /resources/name=pcf-pipelines/source/tag_filter
   value: $PCF_PIPELINES_VERSION
+EOF
+
+cat > state/add-route-53-domain-push.yml <<EOF
+- op: add
+  path: /jobs/name=create-infrastructure:after
+  value: 
+  - name: set-fqdn-ips
+    serial_groups: [infra]
+    plan:
+    - aggregate:
+      - get: terraform-state
+        passed: [create-infrastructure]
+    - task: set-fqdn-ips
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: czero/rootfs
+      inputs:
+      - name: terraform-state
+      params:
+        OS_PROJECT_NAME:
+      run:
+        sh: "jq '.modules[0].outputs' terraform-state/terraform.tfstate"
 EOF
 
 cat > state/remove-worker-tags-opsfile.yml <<EOF
@@ -551,6 +575,7 @@ PATCHED_PIPELINE=$(
   yaml-patch \
     -o state/add-pcf-pipelines-git-version.yml \
     -o state/remove-worker-tags-opsfile.yml \
+    -o state/add-route-53-domain-push.yml \
     < bin/pcf-pipelines/install-pcf/openstack/pipeline.yml
 )
 
