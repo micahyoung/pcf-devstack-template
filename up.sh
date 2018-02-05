@@ -132,7 +132,7 @@ cat > state/add-route53-domain-push.yml <<EOF
 - op: add
   path: /jobs/2
   value: 
-  - name: set-fqdn-ips
+    name: set-fqdn-ips
     serial_groups: [infra]
     plan:
     - aggregate:
