@@ -216,7 +216,14 @@ cat > state/add-route53-domain-push.yml <<EOF
             done
 EOF
 
+cat > state/remove-configure-director-trigger-require-manual-config.yml <<EOF
+# remove trigger 
+- op: remove
+  path: /jobs/3/plan/0/aggregate/1/trigger
+EOF
+
 cat > state/remove-worker-tags-opsfile.yml <<EOF
+# remote openstack tags so pipeline can run on single-vm worker
 - op: remove
   path: /jobs/name=upload-opsman-image/plan/0/aggregate/get=ops-manager/tags
 - op: remove
@@ -645,8 +652,9 @@ fi
 PATCHED_PIPELINE=$(
   yaml-patch \
     -o state/add-pcf-pipelines-git-version.yml \
-    -o state/remove-worker-tags-opsfile.yml \
     -o state/add-route53-domain-push.yml \
+    -o state/remove-worker-tags-opsfile.yml \
+    -o state/remove-configure-director-trigger-require-manual-config.yml \
     < bin/pcf-pipelines/install-pcf/openstack/pipeline.yml
 )
 
