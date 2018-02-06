@@ -173,7 +173,7 @@ cat > state/add-route53-domain-push.yml <<EOF
                  {
                    "Action": "UPSERT",
                    "ResourceRecordSet": {
-                     "Name": "\$HAPROXY_FQDN",
+                     "Name": "\$HAPROXY_FQDN.",
                      "ResourceRecords": [
                          {
                              "Value": "\$HAPROXY_IP"
@@ -186,7 +186,7 @@ cat > state/add-route53-domain-push.yml <<EOF
                  {
                    "Action": "UPSERT",
                    "ResourceRecordSet": {
-                     "Name": "\$OPSMAN_FQDN",
+                     "Name": "\$OPSMAN_FQDN.",
                      "ResourceRecords": [
                          {
                              "Value": "\$OPSMAN_IP"
