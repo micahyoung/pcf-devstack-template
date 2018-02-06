@@ -639,7 +639,7 @@ if ! [ "72:30:20:122880:20" = "$(openstack quota show $OPENSTACK_PROJECT -f valu
 fi
 
 if ! grep -q $HAPROXY_IP <(openstack floating ip list -f value -c 'Floating IP Address'); then
-  floating ip  create --floating-ip-address $HAPROXY_IP $EXTERNAL_NET_NAME
+  openstack floating ip create --floating-ip-address $HAPROXY_IP $EXTERNAL_NET_NAME
 fi
 
 PATCHED_PIPELINE=$(
