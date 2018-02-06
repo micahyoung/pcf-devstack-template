@@ -125,6 +125,9 @@ EOF
 
 cat > state/add-route53-domain-push.yml <<EOF
 - op: add
+  path: /groups/0/jobs/1
+  value: set-fqdn-ips
+- op: add
   path: /groups/1/jobs/1
   value: set-fqdn-ips
 - op: add
