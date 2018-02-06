@@ -28,7 +28,6 @@ source ./state/env.sh
 : ${OPSMAN_ADMIN_PASSWORD:?"!"}
 : ${OPSMAN_DECRYPT_PASSWORD:?"!"}
 : ${HAPROXY_FQDN:?"!"}
-: ${HAPROXY_IP:?"!"}
 : ${HAPROXY_FORWARD_TLS:?"!"}
 : ${HAPROXY_CA_BASE64:?"!"}
 : ${APPSMAN_COMPANY_NAME:?"!"}
@@ -78,6 +77,8 @@ export OS_PASSWORD=$OPENSTACK_PASSWORD
 export OS_AUTH_URL=http://$OPENSTACK_HOST/v2.0
 set -x
 
+# FIXME: should be looked up dynamically but pipeline requires it to be set
+HAPROXY_IP=$(dig +short $HAPROXY_FQDN)
 OPENSTACK_PROJECT_ID=$(openstack project show $OPENSTACK_PROJECT -c id -f value)
 EXTERNAL_NET_ID=$(openstack network show $EXTERNAL_NET_NAME -c id -f value)
 
