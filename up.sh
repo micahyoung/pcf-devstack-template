@@ -149,6 +149,7 @@ cat > state/add-route53-domain-push.yml <<EOF
         params:
           AWS_ACCESS_KEY_ID: $S3_ACCESS_KEY
           AWS_SECRET_ACCESS_KEY: $S3_SECRET_KEY
+          HAPROXY_IP: $HAPROXY_IP
           DOMAIN: $SYSTEM_DOMAIN
           OPSMAN_FQDN: $OPSMAN_FQDN
           HAPROXY_FQDN: $HAPROXY_FQDN
@@ -159,10 +160,9 @@ cat > state/add-route53-domain-push.yml <<EOF
           - |
             #!/bin/bash
 
-            HAPROXY_IP=\$(jq -r '.modules[0].outputs.haproxy_floating_ip.value' terraform-state/terraform.tfstate)
             OPSMAN_IP=\$(jq -r '.modules[0].outputs.opsman_floating_ip.value' terraform-state/terraform.tfstate)
-            echo HA_PROXY_IP: \$HAPROXY_IP
             echo OPSMAN_IP: \$OPSMAN_IP
+            echo HAPROXY_IP: \$HAPROXY_IP
 
             ZONES_JSON=\$(aws route53 list-hosted-zones-by-name --dns-name \$DOMAIN)
             HOSTED_ZONE=\$(jq -r '.HostedZones[0].Id' <(echo \$ZONES_JSON))
